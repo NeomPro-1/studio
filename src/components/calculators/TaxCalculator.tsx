@@ -212,7 +212,7 @@ export function TaxCalculator() {
                     </CardContent>
                 </Card>
 
-                <Accordion type="single" collapsible className="w-full" defaultValue="income-details">
+                <Accordion type="multiple" className="w-full" defaultValue={['income-details']}>
                     <AccordionItem value="income-details">
                         <AccordionTrigger className="text-lg font-semibold">Income Details</AccordionTrigger>
                         <AccordionContent>
@@ -229,7 +229,7 @@ export function TaxCalculator() {
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="deductions">
-                        <AccordionTrigger className="text-lg font-semibold" disabled={!isOldRegime}>Deductions</AccordionTrigger>
+                        <AccordionTrigger className="text-lg font-semibold">Deductions</AccordionTrigger>
                         <AccordionContent>
                              <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -244,7 +244,7 @@ export function TaxCalculator() {
                         </AccordionContent>
                     </AccordionItem>
                      <AccordionItem value="hra-exemption">
-                        <AccordionTrigger className="text-lg font-semibold" disabled={!isOldRegime}>HRA Exemption</AccordionTrigger>
+                        <AccordionTrigger className="text-lg font-semibold">HRA Exemption</AccordionTrigger>
                         <AccordionContent>
                             <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -296,3 +296,5 @@ export function TaxCalculator() {
     </div>
   );
 }
+
+    
