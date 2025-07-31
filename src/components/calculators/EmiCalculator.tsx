@@ -25,7 +25,11 @@ const chartConfig = {
     },
 }
 
-export function EmiCalculator() {
+type EmiCalculatorProps = {
+    title?: string;
+}
+
+export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) {
   const [loanAmount, setLoanAmount] = useState(1000000);
   const [interestRate, setInterestRate] = useState(8.5);
   const [tenure, setTenure] = useState(20);
@@ -63,8 +67,8 @@ export function EmiCalculator() {
   return (
     <div className="space-y-8">
         <div className="text-center">
-            <h1 className="text-3xl font-bold font-headline">EMI Calculator</h1>
-            <p className="text-muted-foreground mt-2">Calculate your Equated Monthly Installment for loans.</p>
+            <h1 className="text-3xl font-bold font-headline">{title}</h1>
+            {title === "EMI Calculator" && <p className="text-muted-foreground mt-2">Calculate your Equated Monthly Installment for loans.</p>}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <Card className="lg:col-span-1">
@@ -76,7 +80,7 @@ export function EmiCalculator() {
                         <Label htmlFor="loan-amount">Loan Amount</Label>
                         <Input
                             id="loan-amount"
-                            value={formatCurrency(loanAmount)}
+                            value={formatCurrency(loanAmount, 'INR')}
                             onChange={(e) => setLoanAmount(Number(e.target.value.replace(/[^0-9]/g, '')))}
                             className="text-lg font-semibold"
                         />
@@ -129,7 +133,7 @@ export function EmiCalculator() {
                         <CardHeader>
                             <CardDescription>Monthly EMI</CardDescription>
                             <CopyToClipboard value={emi}>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(emi)}</p>
+                                <p className="text-2xl font-bold text-primary">{formatCurrency(emi, 'INR')}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -137,7 +141,7 @@ export function EmiCalculator() {
                         <CardHeader>
                             <CardDescription>Total Interest</CardDescription>
                              <CopyToClipboard value={totalInterest}>
-                                <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
+                                <p className="text-2xl font-bold">{formatCurrency(totalInterest, 'INR')}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -145,7 +149,7 @@ export function EmiCalculator() {
                         <CardHeader>
                             <CardDescription>Total Payment</CardDescription>
                             <CopyToClipboard value={totalPayment}>
-                                <p className="text-2xl font-bold">{formatCurrency(totalPayment)}</p>
+                                <p className="text-2xl font-bold">{formatCurrency(totalPayment, 'INR')}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -168,10 +172,9 @@ export function EmiCalculator() {
                                         {chartData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={entry.fill} />
                                         ))}
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </ChartContainer>
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </ChartContainer>
                     </CardContent>
                 </Card>
             </div>

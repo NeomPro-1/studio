@@ -1,11 +1,11 @@
-export const formatCurrency = (value: number | string) => {
+export const formatCurrency = (value: number | string, currency = 'INR') => {
   const number = Number(value);
   if (isNaN(number)) {
     return "₹ 0";
   }
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'INR',
+    currency: currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(number);
