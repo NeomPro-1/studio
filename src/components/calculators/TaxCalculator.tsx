@@ -296,5 +296,3 @@ export function TaxCalculator() {
     </div>
   );
 }
-
-    
