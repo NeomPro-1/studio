@@ -159,7 +159,7 @@ export function SipCalculator() {
                              <CopyToClipboard value={estReturns}>
                                 <p className="text-2xl font-bold">{formatCurrency(estReturns)}</p>
                             </CopyToClipboard>
-                        </Header>
+                        </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
