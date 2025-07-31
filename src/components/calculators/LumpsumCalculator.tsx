@@ -75,8 +75,8 @@ export function LumpsumCalculator() {
                         <Input
                             id="principal"
                             type="text"
-                            value={principal.toLocaleString('en-IN')}
-                             onChange={(e) => {
+                            value={formatCurrency(principal).replace('₹', '')}
+                            onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setPrincipal(value);
                             }}

@@ -81,7 +81,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Input
                             id="loan-amount"
                             type="text"
-                            value={loanAmount.toLocaleString('en-IN')}
+                            value={formatCurrency(loanAmount).replace('₹', '')}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setLoanAmount(value);

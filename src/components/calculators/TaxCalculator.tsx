@@ -117,7 +117,7 @@ export function TaxCalculator() {
                         <Input
                             id="income"
                             type="text"
-                            value={income.toLocaleString('en-IN')}
+                            value={formatCurrency(income).replace('₹', '')}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setIncome(value);
@@ -130,7 +130,7 @@ export function TaxCalculator() {
                         <Input
                             id="deductions"
                             type="text"
-                            value={deductions.toLocaleString('en-IN')}
+                             value={formatCurrency(deductions).replace('₹', '')}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setDeductions(value);
