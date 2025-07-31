@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -9,8 +9,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { formatCurrency } from '@/lib/formatters';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const oldSlabs_below60 = [
     { limit: 250000, rate: 0 },
@@ -215,50 +215,51 @@ export function TaxCalculator() {
                     </CardContent>
                 </Card>
 
-                <Tabs defaultValue="income" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
-                        <TabsTrigger value="income">Income Details</TabsTrigger>
-                        <TabsTrigger value="deductions" disabled={taxRegime === 'new'}>Deductions</TabsTrigger>
-                        <TabsTrigger value="hra" disabled={taxRegime === 'new'}>HRA Exemption</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="income">
-                        <Card>
-                            <CardHeader><CardTitle>Income Details</CardTitle></CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1"><Label>Gross salary income</Label><Input type="text" value={formatCurrency(grossSalary)} onChange={handleInputChange(setGrossSalary)} /></div>
-                                <div className="space-y-1"><Label>Income from other sources</Label><Input type="text" value={formatCurrency(otherSources)} onChange={handleInputChange(setOtherSources)} /></div>
-                                <div className="space-y-1"><Label>Income from interest</Label><Input type="text" value={formatCurrency(interestIncome)} onChange={handleInputChange(setInterestIncome)} /></div>
-                                <div className="space-y-1"><Label>Rental income (let-out)</Label><Input type="text" value={formatCurrency(rentalIncome)} onChange={handleInputChange(setRentalIncome)} /></div>
-                                <div className="space-y-1"><Label>Interest on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} /></div>
-                                <div className="space-y-1"><Label>Interest on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} /></div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                     <TabsContent value="deductions">
-                        <Card>
-                            <CardHeader><CardTitle>Deductions</CardTitle></CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1"><Label>Basic Deductions u/s 80C</Label><Input type="text" value={formatCurrency(basicDeductions80C)} onChange={handleInputChange(setBasicDeductions80C)} /></div>
-                                <div className="space-y-1"><Label>Contribution to NPS u/s 80CCD(1B)</Label><Input type="text" value={formatCurrency(npsContribution)} onChange={handleInputChange(setNpsContribution)} /></div>
-                                <div className="space-y-1"><Label>Medical Insurance Premium u/s 80D</Label><Input type="text" value={formatCurrency(medicalPremium)} onChange={handleInputChange(setMedicalPremium)} /></div>
-                                <div className="space-y-1"><Label>Donation to charity u/s 80G</Label><Input type="text" value={formatCurrency(donation)} onChange={handleInputChange(setDonation)} /></div>
-                                <div className="space-y-1"><Label>Interest on Educational Loan u/s 80E</Label><Input type="text" value={formatCurrency(educationLoanInterest)} onChange={handleInputChange(setEducationLoanInterest)} /></div>
-                                <div className="space-y-1"><Label>Interest on Deposits u/s 80TTA/TTB</Label><Input type="text" value={formatCurrency(savingsInterest)} onChange={handleInputChange(setSavingsInterest)} /></div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                    <TabsContent value="hra">
-                        <Card>
-                            <CardHeader><CardTitle>HRA Exemption</CardTitle></CardHeader>
-                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1"><Label>Basic Salary per annum</Label><Input type="text" value={formatCurrency(hraBasicSalary)} onChange={handleInputChange(setHraBasicSalary)} /></div>
-                                <div className="space-y-1"><Label>Dearness Allowance (DA) per annum</Label><Input type="text" value={formatCurrency(hraDa)} onChange={handleInputChange(setHraDa)} /></div>
-                                <div className="space-y-1"><Label>HRA received per annum</Label><Input type="text" value={formatCurrency(hraReceived)} onChange={handleInputChange(setHraReceived)} /></div>
-                                <div className="space-y-1"><Label>Total rent paid per annum</Label><Input type="text" value={formatCurrency(rentPaid)} onChange={handleInputChange(setRentPaid)} /></div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                </Tabs>
+                <Accordion type="multiple" defaultValue={['income-details']} className="w-full">
+                    <AccordionItem value="income-details">
+                        <AccordionTrigger className="text-lg font-semibold">Income Details</AccordionTrigger>
+                        <AccordionContent>
+                             <Card>
+                                <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-1"><Label>Gross salary income</Label><Input type="text" value={formatCurrency(grossSalary)} onChange={handleInputChange(setGrossSalary)} /></div>
+                                    <div className="space-y-1"><Label>Income from other sources</Label><Input type="text" value={formatCurrency(otherSources)} onChange={handleInputChange(setOtherSources)} /></div>
+                                    <div className="space-y-1"><Label>Income from interest</Label><Input type="text" value={formatCurrency(interestIncome)} onChange={handleInputChange(setInterestIncome)} /></div>
+                                    <div className="space-y-1"><Label>Rental income (let-out)</Label><Input type="text" value={formatCurrency(rentalIncome)} onChange={handleInputChange(setRentalIncome)} /></div>
+                                    <div className="space-y-1"><Label>Interest on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} /></div>
+                                    <div className="space-y-1"><Label>Interest on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} /></div>
+                                </CardContent>
+                            </Card>
+                        </AccordionContent>
+                    </AccordionItem>
+                    <AccordionItem value="deductions" disabled={taxRegime === 'new'}>
+                        <AccordionTrigger className="text-lg font-semibold">Deductions</AccordionTrigger>
+                        <AccordionContent>
+                             <Card>
+                                <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-1"><Label>Basic Deductions u/s 80C</Label><Input type="text" value={formatCurrency(basicDeductions80C)} onChange={handleInputChange(setBasicDeductions80C)} /></div>
+                                    <div className="space-y-1"><Label>Contribution to NPS u/s 80CCD(1B)</Label><Input type="text" value={formatCurrency(npsContribution)} onChange={handleInputChange(setNpsContribution)} /></div>
+                                    <div className="space-y-1"><Label>Medical Insurance Premium u/s 80D</Label><Input type="text" value={formatCurrency(medicalPremium)} onChange={handleInputChange(setMedicalPremium)} /></div>
+                                    <div className="space-y-1"><Label>Donation to charity u/s 80G</Label><Input type="text" value={formatCurrency(donation)} onChange={handleInputChange(setDonation)} /></div>
+                                    <div className="space-y-1"><Label>Interest on Educational Loan u/s 80E</Label><Input type="text" value={formatCurrency(educationLoanInterest)} onChange={handleInputChange(setEducationLoanInterest)} /></div>
+                                    <div className="space-y-1"><Label>Interest on Deposits u/s 80TTA/TTB</Label><Input type="text" value={formatCurrency(savingsInterest)} onChange={handleInputChange(setSavingsInterest)} /></div>
+                                </CardContent>
+                            </Card>
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="hra-exemption" disabled={taxRegime === 'new'}>
+                        <AccordionTrigger className="text-lg font-semibold">HRA Exemption</AccordionTrigger>
+                        <AccordionContent>
+                            <Card>
+                                <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-1"><Label>Basic Salary per annum</Label><Input type="text" value={formatCurrency(hraBasicSalary)} onChange={handleInputChange(setHraBasicSalary)} /></div>
+                                    <div className="space-y-1"><Label>Dearness Allowance (DA) per annum</Label><Input type="text" value={formatCurrency(hraDa)} onChange={handleInputChange(setHraDa)} /></div>
+                                    <div className="space-y-1"><Label>HRA received per annum</Label><Input type="text" value={formatCurrency(hraReceived)} onChange={handleInputChange(setHraReceived)} /></div>
+                                    <div className="space-y-1"><Label>Total rent paid per annum</Label><Input type="text" value={formatCurrency(rentPaid)} onChange={handleInputChange(setRentPaid)} /></div>
+                                </CardContent>
+                            </Card>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
                 <Button onClick={handleCalculate} className="w-full text-lg">Calculate Tax</Button>
             </div>
 
@@ -298,5 +299,3 @@ export function TaxCalculator() {
     </div>
   );
 }
-
-    
