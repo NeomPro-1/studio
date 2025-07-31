@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -21,10 +21,22 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: Landmark,
   },
   {
+    name: "ROI Calculator",
+    description: "Calculate the return on your investment.",
+    path: "/calculators/roi",
+    icon: TrendingUp,
+  },
+  {
     name: "EMI Calculator",
     description: "Calculate your Equated Monthly Installment (EMI) for loans.",
     path: "/calculators/emi",
     icon: Calculator,
+  },
+   {
+    name: "Mortgage Calculator",
+    description: "Calculate your monthly mortgage payments.",
+    path: "/calculators/mortgage",
+    icon: Home,
   },
   {
     name: "Loan Calculators",
