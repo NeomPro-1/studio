@@ -81,13 +81,13 @@ export function SipCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="monthly-investment">Monthly Investment (₹)</Label>
+                        <Label htmlFor="monthly-investment">Monthly Investment</Label>
                         <Input
                             id="monthly-investment"
                             type="text"
                             value={formatCurrency(monthlyInvestment)}
                             onChange={(e) => {
-                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                const value = Number(e.target.value.replace(/[^0-9.]/g, ''));
                                 if (!isNaN(value)) setMonthlyInvestment(value);
                             }}
                             className="text-lg font-semibold"
