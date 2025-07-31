@@ -80,7 +80,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Label htmlFor="loan-amount">Loan Amount</Label>
                         <Input
                             id="loan-amount"
-                            value={formatCurrency(loanAmount, 'INR')}
+                            value={formatCurrency(loanAmount)}
                             onChange={(e) => setLoanAmount(Number(e.target.value.replace(/[^0-9]/g, '')))}
                             className="text-lg font-semibold"
                         />
@@ -133,7 +133,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <CardHeader>
                             <CardDescription>Monthly EMI</CardDescription>
                             <CopyToClipboard value={emi}>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(emi, 'INR')}</p>
+                                <p className="text-2xl font-bold text-primary">{formatCurrency(emi)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -141,7 +141,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <CardHeader>
                             <CardDescription>Total Interest</CardDescription>
                              <CopyToClipboard value={totalInterest}>
-                                <p className="text-2xl font-bold">{formatCurrency(totalInterest, 'INR')}</p>
+                                <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -149,7 +149,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <CardHeader>
                             <CardDescription>Total Payment</CardDescription>
                             <CopyToClipboard value={totalPayment}>
-                                <p className="text-2xl font-bold">{formatCurrency(totalPayment, 'INR')}</p>
+                                <p className="text-2xl font-bold">{formatCurrency(totalPayment)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
