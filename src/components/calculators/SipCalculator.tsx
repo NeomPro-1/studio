@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -85,9 +86,9 @@ export function SipCalculator() {
                         <Input
                             id="monthly-investment"
                             type="text"
-                            value={formatCurrency(monthlyInvestment)}
+                            value={`₹ ${monthlyInvestment.toLocaleString('en-IN')}`}
                             onChange={(e) => {
-                                const value = Number(e.target.value.replace(/[^0-9.]/g, ''));
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setMonthlyInvestment(value);
                             }}
                             className="text-lg font-semibold"
@@ -152,7 +153,7 @@ export function SipCalculator() {
                                 <p className="text-2xl font-bold">{formatCurrency(totalInvested)}</p>
                             </CopyToClipboard>
                         </CardHeader>
-                    </card>
+                    </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Est. Returns</CardDescription>
