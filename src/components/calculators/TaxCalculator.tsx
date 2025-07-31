@@ -49,18 +49,14 @@ const calculateTaxInternal = (income: number, slabs: typeof oldSlabs_below60) =>
 
     for (const slab of slabs) {
         if (remainingIncome <= 0) break;
-
-        const slabAmount = slab.limit - lastLimit;
-        const taxableInSlab = Math.min(remainingIncome, slabAmount);
+        
+        const taxableInSlab = slab.limit === Infinity ? remainingIncome : Math.min(remainingIncome, slab.limit - lastLimit);
         
         tax += taxableInSlab * slab.rate;
         remainingIncome -= taxableInSlab;
         lastLimit = slab.limit;
 
-        if (slab.limit === Infinity && remainingIncome > 0) {
-            tax += remainingIncome * slab.rate;
-            break;
-        }
+        if (slab.limit === Infinity) break;
     }
     return tax;
 };
@@ -219,7 +215,7 @@ export function TaxCalculator() {
                     </CardContent>
                 </Card>
 
-                <Accordion type="multiple" defaultValue={['income-details']} className="w-full">
+                <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="income-details">
                         <AccordionTrigger className="text-lg font-semibold">Income Details</AccordionTrigger>
                         <AccordionContent>
@@ -303,5 +299,3 @@ export function TaxCalculator() {
     </div>
   );
 }
-
-  
