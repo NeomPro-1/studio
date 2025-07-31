@@ -44,20 +44,20 @@ const newSlabs = [
 
 const calculateTaxInternal = (income: number, slabs: typeof oldSlabs_below60) => {
     let tax = 0;
-    let remainingIncome = income;
-    let lastLimit = 0;
+    let taxableIncome = income;
 
-    for (const slab of slabs) {
-        if (remainingIncome <= 0) break;
-        
-        const taxableInSlab = slab.limit === Infinity ? remainingIncome : Math.min(remainingIncome, slab.limit - lastLimit);
-        
-        tax += taxableInSlab * slab.rate;
-        remainingIncome -= taxableInSlab;
-        lastLimit = slab.limit;
-
-        if (slab.limit === Infinity) break;
+    if (taxableIncome <= slabs[0].limit) {
+      return 0;
     }
+
+    slabs.reduce((prevLimit, slab) => {
+      if (taxableIncome > prevLimit) {
+        const taxableInSlab = Math.min(taxableIncome - prevLimit, slab.limit - prevLimit);
+        tax += taxableInSlab * slab.rate;
+      }
+      return slab.limit;
+    }, 0);
+
     return tax;
 };
 
@@ -96,32 +96,26 @@ export function TaxCalculator() {
   const [showResults, setShowResults] = useState(false);
 
   const handleCalculate = () => {
-    // --- Calculate Total Income ---
     const totalGrossIncome = grossSalary + otherSources + interestIncome + rentalIncome;
-
     let finalTaxableIncome = 0;
     let finalTax = 0;
 
     if (taxRegime === 'old') {
-      // --- HRA Exemption ---
-      const hraExemption = Math.min(
-          hraReceived,
-          (hraBasicSalary + hraDa) * 0.5, // Assuming metro city for simplicity
-          rentPaid - (hraBasicSalary + hraDa) * 0.1
-      );
-      const finalHraExemption = Math.max(0, hraExemption);
-
-      // --- Deductions ---
+      const hraExemptionComponent1 = hraReceived;
+      const hraExemptionComponent2 = (hraBasicSalary + hraDa) * 0.5; // Assuming metro city
+      const hraExemptionComponent3 = rentPaid - (hraBasicSalary + hraDa) * 0.1;
+      const finalHraExemption = Math.max(0, Math.min(hraExemptionComponent1, hraExemptionComponent2, hraExemptionComponent3));
+      
       const totalDeductions =
           Math.min(150000, basicDeductions80C) +
           Math.min(50000, npsContribution) +
-          Math.min(25000, medicalPremium) + // Assuming below 60
+          Math.min(25000, medicalPremium) + // Assuming below 60 for simplicity
           donation +
           educationLoanInterest +
           Math.min(10000, savingsInterest) +
           Math.min(200000, interestSelfOccupied) +
           interestLetOut +
-          50000; // Standard Deduction
+          50000; // Standard Deduction for old regime (salaried)
 
       const grossTaxableIncome = totalGrossIncome - finalHraExemption;
       finalTaxableIncome = Math.max(0, grossTaxableIncome - totalDeductions);
@@ -133,10 +127,10 @@ export function TaxCalculator() {
 
       let tax = calculateTaxInternal(finalTaxableIncome, slabs);
       
-      // Rebate under 87A for old regime
       if (finalTaxableIncome <= 500000) {
-        tax = 0;
+        tax = 0; // Rebate u/s 87A
       }
+
       const cess = tax * 0.04;
       finalTax = tax > 0 ? tax + cess : 0;
 
@@ -144,10 +138,11 @@ export function TaxCalculator() {
       const standardDeduction = 50000;
       finalTaxableIncome = Math.max(0, totalGrossIncome - standardDeduction);
       let tax = calculateTaxInternal(finalTaxableIncome, newSlabs);
-       // Rebate under 87A for new regime
+      
       if (finalTaxableIncome <= 700000) {
-          tax = 0;
+          tax = 0; // Rebate u/s 87A
       }
+      
       const cess = tax * 0.04;
       finalTax = tax > 0 ? tax + cess : 0;
     }
@@ -215,7 +210,7 @@ export function TaxCalculator() {
                     </CardContent>
                 </Card>
 
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full" defaultValue="income-details">
                     <AccordionItem value="income-details">
                         <AccordionTrigger className="text-lg font-semibold">Income Details</AccordionTrigger>
                         <AccordionContent>
@@ -225,8 +220,8 @@ export function TaxCalculator() {
                                     <div className="space-y-1"><Label>Income from other sources</Label><Input type="text" value={formatCurrency(otherSources)} onChange={handleInputChange(setOtherSources)} /></div>
                                     <div className="space-y-1"><Label>Income from interest</Label><Input type="text" value={formatCurrency(interestIncome)} onChange={handleInputChange(setInterestIncome)} /></div>
                                     <div className="space-y-1"><Label>Rental income (let-out)</Label><Input type="text" value={formatCurrency(rentalIncome)} onChange={handleInputChange(setRentalIncome)} /></div>
-                                    <div className="space-y-1"><Label>Interest on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} /></div>
-                                    <div className="space-y-1"><Label>Interest on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} /></div>
+                                    <div className="space-y-1"><Label>Annual interest paid on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} disabled={taxRegime === 'new'} /></div>
+                                    <div className="space-y-1"><Label>Annual interest paid on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} disabled={taxRegime === 'new'} /></div>
                                 </CardContent>
                             </Card>
                         </AccordionContent>
