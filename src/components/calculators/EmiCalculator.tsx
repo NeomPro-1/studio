@@ -81,7 +81,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Input
                             id="loan-amount"
                             type="text"
-                            value={`₹ ${loanAmount.toLocaleString('en-IN')}`}
+                            value={formatCurrency(loanAmount)}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setLoanAmount(value);
@@ -178,7 +178,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                                 <PieChart>
                                     <ChartTooltip
                                         cursor={false}
-                                        content={<ChartTooltipContent hideLabel />}
+                                        content={<ChartTooltipContent hideLabel formatter={(value, name) => [formatCurrency(value), name]} />}
                                     />
                                     <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={80} startAngle={90} endAngle={450}>
                                         {chartData.map((entry, index) => (
@@ -193,5 +193,5 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
             </div>
         </div>
     </div>
-  )
+  );
 }

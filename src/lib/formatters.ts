@@ -1,19 +1,13 @@
-export const formatCurrency = (value: number | string, symbolOnly = false) => {
-  if (symbolOnly) {
-    return '₹';
-  }
+
+export const formatCurrency = (value: number | string) => {
   const number = Number(value);
   if (isNaN(number)) {
     return "₹ 0";
   }
-  const formatter = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
+  return `₹ ${number.toLocaleString('en-IN', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  });
-
-  return formatter.format(number);
+  })}`;
 };
 
 export const formatPercentage = (value: number | string) => {

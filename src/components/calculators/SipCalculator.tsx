@@ -85,7 +85,7 @@ export function SipCalculator() {
                         <Input 
                             id="monthly-investment" 
                             type="text"
-                            value={`₹ ${monthlyInvestment.toLocaleString('en-IN')}`}
+                            value={formatCurrency(monthlyInvestment)}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setMonthlyInvestment(value);
@@ -152,7 +152,7 @@ export function SipCalculator() {
                                 <p className="text-2xl font-bold">{formatCurrency(totalInvested)}</p>
                             </CopyToClipboard>
                         </CardHeader>
-                    </Card>
+                    </card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Est. Returns</CardDescription>
@@ -185,7 +185,14 @@ export function SipCalculator() {
                                     <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value)} />
                                     <ChartTooltip
                                         cursor={false}
-                                        content={<ChartTooltipContent hideLabel />}
+                                        content={<ChartTooltipContent 
+                                            formatter={(value, name, props) => {
+                                                if (props.dataKey === 'invested' || props.dataKey === 'returns') {
+                                                    return [formatCurrency(value as number), props.name];
+                                                }
+                                                return [value, name];
+                                            }}
+                                        />}
                                     />
                                     <ChartLegend content={<ChartLegendContent />} />
                                     <Bar dataKey="invested" fill="var(--color-invested)" stackId="a" radius={[0, 0, 4, 4]} />

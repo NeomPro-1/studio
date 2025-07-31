@@ -75,7 +75,7 @@ export function LumpsumCalculator() {
                         <Input
                             id="principal"
                             type="text"
-                            value={`₹ ${principal.toLocaleString('en-IN')}`}
+                            value={formatCurrency(principal)}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setPrincipal(value);
@@ -175,7 +175,14 @@ export function LumpsumCalculator() {
                                     <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value)} />
                                     <ChartTooltip
                                         cursor={false}
-                                        content={<ChartTooltipContent hideLabel />}
+                                        content={<ChartTooltipContent 
+                                            formatter={(value, name, props) => {
+                                                if (props.dataKey === 'invested' || props.dataKey === 'returns') {
+                                                    return [formatCurrency(value as number), props.name];
+                                                }
+                                                return [value, name];
+                                            }}
+                                        />}
                                     />
                                     <ChartLegend content={<ChartLegendContent />} />
                                     <Bar dataKey="invested" fill="var(--color-invested)" stackId="a" radius={[0, 0, 4, 4]} />

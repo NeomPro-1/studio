@@ -28,24 +28,18 @@ const newSlabs = [
 const calculateTax = (income: number, slabs: typeof oldSlabs) => {
     let tax = 0;
     let taxableIncome = income;
-
-    if (slabs === oldSlabs && income <= 500000) {
-        return 0; // Tax rebate under section 87A
-    }
-    
-    if (slabs === newSlabs && income <= 700000) {
-        return 0; // Tax rebate under section 87A
-    }
-
     let lastLimit = 0;
+
     for (const slab of slabs) {
-        if (taxableIncome > (slab.limit - lastLimit)) {
-            tax += (slab.limit - lastLimit) * slab.rate;
-            taxableIncome -= (slab.limit - lastLimit);
-            lastLimit = slab.limit;
-        } else {
+        if (taxableIncome <= 0) break;
+
+        const taxableInSlab = Math.min(taxableIncome, slab.limit - lastLimit);
+        tax += taxableInSlab * slab.rate;
+        taxableIncome -= taxableInSlab;
+        lastLimit = slab.limit;
+
+        if (slab.limit === Infinity) {
             tax += taxableIncome * slab.rate;
-            taxableIncome = 0;
             break;
         }
     }
@@ -65,35 +59,33 @@ export function TaxCalculator() {
   useEffect(() => {
     let taxableIncome;
     let slabs;
-    let totalIncomeForRebate = income;
-
+    
     if (taxRegime === 'old') {
       taxableIncome = Math.max(0, income - deductions);
       slabs = oldSlabs;
-    } else {
-      // Standard deduction of 50,000 is available in the new regime for salary/pension income
-      taxableIncome = Math.max(0, income - 50000);
+      let tax = calculateTax(taxableIncome, slabs);
+      // Rebate under 87A for old regime
+      if (taxableIncome <= 500000) {
+        tax = 0;
+      }
+      const cess = tax * 0.04;
+      const totalTax = tax > 0 ? tax + cess : 0;
+      setTaxPayable(totalTax);
+      setEffectiveTaxRate(totalTax > 0 ? (totalTax / income) * 100 : 0);
+
+    } else { // New Regime
+      taxableIncome = Math.max(0, income - 50000); // Standard deduction
       slabs = newSlabs;
-      totalIncomeForRebate = income; // Rebate on gross income
+      let tax = calculateTax(taxableIncome, slabs);
+       // Rebate under 87A for new regime
+      if (income <= 700000) {
+          tax = 0;
+      }
+      const cess = tax * 0.04;
+      const totalTax = tax > 0 ? tax + cess : 0;
+      setTaxPayable(totalTax);
+      setEffectiveTaxRate(totalTax > 0 ? (totalTax / income) * 100 : 0);
     }
-    
-    let tax = calculateTax(taxableIncome, slabs);
-    
-    // Rebate under 87A
-    if (taxRegime === 'new' && totalIncomeForRebate <= 700000) {
-        tax = 0;
-    }
-    if (taxRegime === 'old' && taxableIncome <= 500000) {
-        tax = 0;
-    }
-
-    // Health and Education Cess
-    const cess = tax * 0.04;
-    const totalTax = tax > 0 ? tax + cess : 0;
-
-    setTaxPayable(totalTax);
-    setEffectiveTaxRate(totalTax > 0 ? (totalTax / income) * 100 : 0);
-
   }, [income, deductions, taxRegime]);
 
   const taxableIncomeDisplay = taxRegime === 'old' 
@@ -117,7 +109,7 @@ export function TaxCalculator() {
                         <Input
                             id="income"
                             type="text"
-                            value={`₹ ${income.toLocaleString('en-IN')}`}
+                            value={formatCurrency(income)}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setIncome(value);
@@ -130,7 +122,7 @@ export function TaxCalculator() {
                         <Input
                             id="deductions"
                             type="text"
-                             value={`₹ ${deductions.toLocaleString('en-IN')}`}
+                            value={formatCurrency(deductions)}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setDeductions(value);
