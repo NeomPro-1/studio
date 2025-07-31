@@ -160,6 +160,8 @@ export function TaxCalculator() {
       }
   };
 
+  const isOldRegime = taxRegime === 'old';
+
   return (
     <div className="space-y-8">
         <div className="text-center">
@@ -220,14 +222,14 @@ export function TaxCalculator() {
                                     <div className="space-y-1"><Label>Income from other sources</Label><Input type="text" value={formatCurrency(otherSources)} onChange={handleInputChange(setOtherSources)} /></div>
                                     <div className="space-y-1"><Label>Income from interest</Label><Input type="text" value={formatCurrency(interestIncome)} onChange={handleInputChange(setInterestIncome)} /></div>
                                     <div className="space-y-1"><Label>Rental income (let-out)</Label><Input type="text" value={formatCurrency(rentalIncome)} onChange={handleInputChange(setRentalIncome)} /></div>
-                                    <div className="space-y-1"><Label>Annual interest paid on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} disabled={taxRegime === 'new'} /></div>
-                                    <div className="space-y-1"><Label>Annual interest paid on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} disabled={taxRegime === 'new'} /></div>
+                                    <div className="space-y-1"><Label>Annual interest paid on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Annual interest paid on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} disabled={!isOldRegime} /></div>
                                 </CardContent>
                             </Card>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="deductions" disabled={taxRegime === 'new'}>
-                        <AccordionTrigger className="text-lg font-semibold">Deductions</AccordionTrigger>
+                    <AccordionItem value="deductions">
+                        <AccordionTrigger className="text-lg font-semibold" disabled={!isOldRegime}>Deductions</AccordionTrigger>
                         <AccordionContent>
                              <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -241,8 +243,8 @@ export function TaxCalculator() {
                             </Card>
                         </AccordionContent>
                     </AccordionItem>
-                     <AccordionItem value="hra-exemption" disabled={taxRegime === 'new'}>
-                        <AccordionTrigger className="text-lg font-semibold">HRA Exemption</AccordionTrigger>
+                     <AccordionItem value="hra-exemption">
+                        <AccordionTrigger className="text-lg font-semibold" disabled={!isOldRegime}>HRA Exemption</AccordionTrigger>
                         <AccordionContent>
                             <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -294,3 +296,5 @@ export function TaxCalculator() {
     </div>
   );
 }
+
+    
