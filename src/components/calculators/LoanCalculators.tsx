@@ -51,11 +51,34 @@ export function LoanCalculators() {
                         <CardHeader>
                             <CardTitle>Bank-Specific EMI Calculators</CardTitle>
                             <CardDescription>
-                                Coming soon! Calculators tailored for specific banks.
+                               Calculators tailored for specific banks.
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="flex items-center justify-center h-48">
-                            <p className="text-muted-foreground">This section is under construction.</p>
+                        <CardContent>
+                            <Tabs defaultValue="sbi" orientation="vertical">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <TabsList className="flex flex-col h-auto justify-start">
+                                        <TabsTrigger value="sbi" className="w-full justify-start">SBI</TabsTrigger>
+                                        <TabsTrigger value="hdfc" className="w-full justify-start">HDFC</TabsTrigger>
+                                        <TabsTrigger value="axis" className="w-full justify-start">Axis Bank</TabsTrigger>
+                                        <TabsTrigger value="icici" className="w-full justify-start">ICICI</TabsTrigger>
+                                    </TabsList>
+                                    <div className="md:col-span-3">
+                                        <TabsContent value="sbi">
+                                            <EmiCalculator title="SBI Loan EMI Calculator"/>
+                                        </TabsContent>
+                                        <TabsContent value="hdfc">
+                                            <EmiCalculator title="HDFC Loan EMI Calculator"/>
+                                        </TabsContent>
+                                        <TabsContent value="axis">
+                                             <EmiCalculator title="Axis Bank Loan EMI Calculator"/>
+                                        </TabsContent>
+                                        <TabsContent value="icici">
+                                             <EmiCalculator title="ICICI Loan EMI Calculator"/>
+                                        </TabsContent>
+                                    </div>
+                                </div>
+                            </Tabs>
                         </CardContent>
                     </Card>
                 </TabsContent>
