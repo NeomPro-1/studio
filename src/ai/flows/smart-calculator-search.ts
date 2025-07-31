@@ -10,6 +10,9 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { CALCULATORS } from '@/lib/constants';
+
+const calculatorNames = CALCULATORS.map(c => c.name);
 
 const SmartCalculatorSearchInputSchema = z.object({
   query: z.string().describe('The user search query.'),
@@ -39,11 +42,14 @@ const prompt = ai.definePrompt({
   output: {schema: SmartCalculatorSearchOutputSchema},
   prompt: `You are a helpful assistant that suggests relevant calculators based on a user's search query.
 
-  Given the following query, suggest up to 5 calculators that the user might be looking for. Be specific.
+  The available calculators are:
+  ${calculatorNames.join('\n')}
+
+  Given the following query, suggest up to 5 relevant calculators from the list above.
 
   Query: {{{query}}}
 
-  Format your response as a JSON object with a "suggestions" field that is an array of strings.
+  Format your response as a JSON object with a "suggestions" field that is an array of strings. Only include calculator names from the provided list.
   `,
 });
 
