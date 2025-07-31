@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -19,6 +19,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Calculate the future value of a one-time investment.",
     path: "/calculators/lumpsum",
     icon: Landmark,
+  },
+   {
+    name: "SWP Calculator",
+    description: "Plan your systematic withdrawals from your investments.",
+    path: "/calculators/swp",
+    icon: Wallet,
   },
   {
     name: "ROI Calculator",
