@@ -34,7 +34,7 @@ export default function Home() {
                   <CardDescription>{calculator.description}</CardDescription>
                 </CardHeader>
                 <div className="p-4 pt-0">
-                  <div className="flex justify-end items-center text-sm font-semibold text-primary rounded-md p-2 group-hover:bg-accent/20 transition-colors duration-300">
+                  <div className="flex justify-end items-center text-sm font-semibold text-primary transition-all duration-300 group-hover:brightness-125">
                     Calculate
                     <ArrowRight className="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" />
                   </div>
