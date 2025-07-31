@@ -1,14 +1,13 @@
 
 export const formatCurrency = (value: number | string) => {
-  const number = Number(value);
+  const number = Number(String(value).replace(/[^0-9.]/g, ''));
   if (isNaN(number)) {
-    return "₹ 0";
+    return "0";
   }
-  // Manually prepend the Rupee symbol to ensure it's always correct.
-  return `₹ ${number.toLocaleString('en-IN', {
+  return number.toLocaleString('en-IN', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  })}`;
+  });
 };
 
 export const formatPercentage = (value: number | string) => {
@@ -22,9 +21,8 @@ export const formatPercentage = (value: number | string) => {
 export const formatLakhs = (value: number | string) => {
   const number = Number(value);
   if (isNaN(number)) {
-    return "₹ 0 L";
+    return "0 L";
   }
   const lakhs = number / 100000;
-  // Manually prepend the Rupee symbol.
-  return `₹${lakhs.toFixed(2)} L`;
+  return `${lakhs.toFixed(2)} L`;
 }
