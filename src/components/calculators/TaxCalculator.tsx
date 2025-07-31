@@ -103,7 +103,7 @@ export function TaxCalculator() {
     if (taxRegime === 'old') {
       const hraExemptionComponent1 = hraReceived;
       const hraExemptionComponent2 = (hraBasicSalary + hraDa) * 0.5; // Assuming metro city
-      const hraExemptionComponent3 = rentPaid - (hraBasicSalary + hraDa) * 0.1;
+      const hraExemptionComponent3 = rentPaid > 0 ? rentPaid - (hraBasicSalary + hraDa) * 0.1 : 0;
       const finalHraExemption = Math.max(0, Math.min(hraExemptionComponent1, hraExemptionComponent2, hraExemptionComponent3));
       
       const totalDeductions =
@@ -115,7 +115,7 @@ export function TaxCalculator() {
           Math.min(10000, savingsInterest) +
           Math.min(200000, interestSelfOccupied) +
           interestLetOut +
-          50000; // Standard Deduction for old regime (salaried)
+          (grossSalary > 0 ? 50000 : 0); // Standard Deduction for old regime (salaried)
 
       const grossTaxableIncome = totalGrossIncome - finalHraExemption;
       finalTaxableIncome = Math.max(0, grossTaxableIncome - totalDeductions);
@@ -135,7 +135,7 @@ export function TaxCalculator() {
       finalTax = tax > 0 ? tax + cess : 0;
 
     } else { // New Regime
-      const standardDeduction = 50000;
+      const standardDeduction = (grossSalary > 0 ? 50000 : 0);
       finalTaxableIncome = Math.max(0, totalGrossIncome - standardDeduction);
       let tax = calculateTaxInternal(finalTaxableIncome, newSlabs);
       
