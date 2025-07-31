@@ -8,14 +8,30 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { formatCurrency } from '@/lib/formatters';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 
-// As of Budget 2023, the new tax regime is the default.
-const oldSlabs = [
+const oldSlabs_below60 = [
     { limit: 250000, rate: 0 },
     { limit: 500000, rate: 0.05 },
     { limit: 1000000, rate: 0.20 },
     { limit: Infinity, rate: 0.30 },
 ];
+
+const oldSlabs_60_to_80 = [
+    { limit: 300000, rate: 0 },
+    { limit: 500000, rate: 0.05 },
+    { limit: 1000000, rate: 0.20 },
+    { limit: Infinity, rate: 0.30 },
+];
+
+const oldSlabs_above80 = [
+    { limit: 500000, rate: 0 },
+    { limit: 1000000, rate: 0.20 },
+    { limit: Infinity, rate: 0.30 },
+];
+
 
 const newSlabs = [
     { limit: 300000, rate: 0 },
@@ -26,72 +42,128 @@ const newSlabs = [
     { limit: Infinity, rate: 0.30 },
 ];
 
-const calculateTax = (income: number, slabs: typeof oldSlabs) => {
+const calculateTaxInternal = (income: number, slabs: typeof oldSlabs_below60) => {
     let tax = 0;
-    let taxableIncome = income;
+    let remainingIncome = income;
     let lastLimit = 0;
 
     for (const slab of slabs) {
-        if (taxableIncome <= 0) break;
+        if (remainingIncome <= 0) break;
+        
+        const slabRange = slab.limit - lastLimit;
+        const taxableInSlab = Math.min(remainingIncome, slabRange);
 
-        const taxableInSlab = Math.min(taxableIncome, slab.limit - lastLimit);
         tax += taxableInSlab * slab.rate;
-        taxableIncome -= taxableInSlab;
+        remainingIncome -= taxableInSlab;
         lastLimit = slab.limit;
-
+        
         if (slab.limit === Infinity) {
-            tax += taxableIncome * slab.rate;
-            break;
+             tax += remainingIncome * slab.rate;
+             break;
         }
     }
-
     return tax;
 };
 
 
 export function TaxCalculator() {
-  const [income, setIncome] = useState(1000000);
-  const [deductions, setDeductions] = useState(150000);
+  const [assessmentYear, setAssessmentYear] = useState('2025-2026');
+  const [ageCategory, setAgeCategory] = useState('below_60');
   const [taxRegime, setTaxRegime] = useState('new');
+
+  // Income
+  const [grossSalary, setGrossSalary] = useState(0);
+  const [otherSources, setOtherSources] = useState(0);
+  const [interestIncome, setInterestIncome] = useState(0);
+  const [rentalIncome, setRentalIncome] = useState(0);
+  const [interestSelfOccupied, setInterestSelfOccupied] = useState(0);
+  const [interestLetOut, setInterestLetOut] = useState(0);
   
+  // Deductions
+  const [basicDeductions80C, setBasicDeductions80C] = useState(0);
+  const [npsContribution, setNpsContribution] = useState(0);
+  const [medicalPremium, setMedicalPremium] = useState(0);
+  const [donation, setDonation] = useState(0);
+  const [educationLoanInterest, setEducationLoanInterest] = useState(0);
+  const [savingsInterest, setSavingsInterest] = useState(0);
+
+  // HRA
+  const [hraBasicSalary, setHraBasicSalary] = useState(0);
+  const [hraDa, setHraDa] = useState(0);
+  const [hraReceived, setHraReceived] = useState(0);
+  const [rentPaid, setRentPaid] = useState(0);
+
+  // Results
+  const [taxableIncome, setTaxableIncome] = useState(0);
   const [taxPayable, setTaxPayable] = useState(0);
   const [effectiveTaxRate, setEffectiveTaxRate] = useState(0);
+  const [showResults, setShowResults] = useState(false);
 
-  useEffect(() => {
-    let taxableIncome;
-    let slabs;
+  const handleCalculate = () => {
+    // --- Calculate Total Income ---
+    const totalIncome = grossSalary + otherSources + interestIncome + rentalIncome;
+
+    // --- HRA Exemption ---
+    const hraExemption = Math.min(
+        hraReceived,
+        (hraBasicSalary + hraDa) * 0.5, // Assuming metro city for simplicity
+        rentPaid - (hraBasicSalary + hraDa) * 0.1
+    );
+    const finalHraExemption = Math.max(0, hraExemption);
+
+    // --- Deductions ---
+    const totalDeductions = 
+        Math.min(150000, basicDeductions80C) +
+        Math.min(50000, npsContribution) +
+        Math.min(25000, medicalPremium) + // Assuming below 60
+        donation +
+        educationLoanInterest +
+        Math.min(10000, savingsInterest) +
+        Math.min(200000, interestSelfOccupied) +
+        interestLetOut;
     
+    let finalTaxableIncome = 0;
+    let finalTax = 0;
+    const grossTotalIncome = totalIncome - finalHraExemption;
+
     if (taxRegime === 'old') {
-      taxableIncome = Math.max(0, income - deductions);
-      slabs = oldSlabs;
-      let tax = calculateTax(taxableIncome, slabs);
+      finalTaxableIncome = Math.max(0, grossTotalIncome - totalDeductions);
+      let slabs;
+      if (ageCategory === 'below_60') slabs = oldSlabs_below60;
+      else if (ageCategory === '60_to_80') slabs = oldSlabs_60_to_80;
+      else slabs = oldSlabs_above80;
+
+      let tax = calculateTaxInternal(finalTaxableIncome, slabs);
       // Rebate under 87A for old regime
-      if (taxableIncome <= 500000) {
+      if (finalTaxableIncome <= 500000) {
         tax = 0;
       }
       const cess = tax * 0.04;
-      const totalTax = tax > 0 ? tax + cess : 0;
-      setTaxPayable(totalTax);
-      setEffectiveTaxRate(totalTax > 0 ? (totalTax / income) * 100 : 0);
+      finalTax = tax > 0 ? tax + cess : 0;
 
     } else { // New Regime
-      taxableIncome = Math.max(0, income - 50000); // Standard deduction
-      slabs = newSlabs;
-      let tax = calculateTax(taxableIncome, slabs);
+      finalTaxableIncome = Math.max(0, grossSalary - 50000) + otherSources + interestIncome + rentalIncome; // Standard deduction on salary
+      let tax = calculateTaxInternal(finalTaxableIncome, newSlabs);
        // Rebate under 87A for new regime
-      if (income <= 700000) {
+      if (finalTaxableIncome <= 700000) {
           tax = 0;
       }
       const cess = tax * 0.04;
-      const totalTax = tax > 0 ? tax + cess : 0;
-      setTaxPayable(totalTax);
-      setEffectiveTaxRate(totalTax > 0 ? (totalTax / income) * 100 : 0);
+      finalTax = tax > 0 ? tax + cess : 0;
     }
-  }, [income, deductions, taxRegime]);
-
-  const taxableIncomeDisplay = taxRegime === 'old' 
-    ? Math.max(0, income - deductions) 
-    : Math.max(0, income - 50000);
+    
+    setTaxableIncome(finalTaxableIncome);
+    setTaxPayable(finalTax);
+    setEffectiveTaxRate(totalIncome > 0 ? (finalTax / totalIncome) * 100 : 0);
+    setShowResults(true);
+  };
+  
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<number>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+      if (!isNaN(value)) {
+          setter(value);
+      }
+  };
 
   return (
     <div className="space-y-8">
@@ -100,86 +172,131 @@ export function TaxCalculator() {
             <p className="text-muted-foreground mt-2">Estimate your income tax for the financial year.</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Card className="lg:col-span-1">
-                <CardHeader>
-                    <CardTitle>Your Income & Deductions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="income">Annual Income (from salary)</Label>
-                        <Input
-                            id="income"
-                            type="text"
-                            value={formatCurrency(income)}
-                            onChange={(e) => {
-                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
-                                if (!isNaN(value)) setIncome(value);
-                            }}
-                            className="text-lg font-semibold"
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="deductions">Total Deductions (e.g., 80C, 80D)</Label>
-                        <Input
-                            id="deductions"
-                            type="text"
-                            value={formatCurrency(deductions)}
-                            onChange={(e) => {
-                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
-                                if (!isNaN(value)) setDeductions(value);
-                            }}
-                            className="text-lg font-semibold"
-                            disabled={taxRegime === 'new'}
-                        />
-                    </div>
-                     <div className="space-y-3">
-                        <Label>Tax Regime</Label>
-                        <RadioGroup value={taxRegime} onValueChange={setTaxRegime} className="flex space-x-4">
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="new" id="new-regime" />
-                                <Label htmlFor="new-regime">New Regime (Default)</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="old" id="old-regime" />
-                                <Label htmlFor="old-regime">Old Regime</Label>
-                            </div>
-                        </RadioGroup>
-                        <p className="text-xs text-muted-foreground">
-                            The new tax regime is now the default option. You can opt for the old regime if it's more beneficial. A standard deduction of ₹50,000 is available in the new regime.
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
-
-            <div className="lg:col-span-2 space-y-8">
-                 <Card>
+            <div className="lg:col-span-2 space-y-6">
+                <Card>
                     <CardHeader>
-                        <CardTitle>Tax Calculation</CardTitle>
-                        <CardDescription>Based on the {taxRegime === 'new' ? 'New' : 'Old'} Tax Regime.</CardDescription>
+                        <CardTitle>Configuration</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                        <Card className="p-4">
-                            <CardDescription>Taxable Income</CardDescription>
-                            <p className="text-2xl font-bold">
-                                {formatCurrency(taxableIncomeDisplay)}
-                            </p>
-                        </Card>
-                        <Card className="p-4">
-                            <CardDescription>Effective Tax Rate</CardDescription>
-                            <p className="text-2xl font-bold">
-                                {effectiveTaxRate.toFixed(2)}%
-                            </p>
-                        </Card>
-                         <Card className="md:col-span-2 p-6 bg-primary/10">
-                            <CardDescription>Total Tax Payable</CardDescription>
-                             <CopyToClipboard value={taxPayable}>
-                                <p className="text-3xl font-bold text-primary">{formatCurrency(taxPayable)}</p>
-                            </CopyToClipboard>
-                        </Card>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-2">
+                           <Label>Assessment Year</Label>
+                           <Select value={assessmentYear} onValueChange={setAssessmentYear}>
+                               <SelectTrigger><SelectValue /></SelectTrigger>
+                               <SelectContent>
+                                   <SelectItem value="2025-2026">2025-2026</SelectItem>
+                                   <SelectItem value="2024-2025">2024-2025</SelectItem>
+                               </SelectContent>
+                           </Select>
+                        </div>
+                        <div className="space-y-2">
+                           <Label>Age Category</Label>
+                           <Select value={ageCategory} onValueChange={setAgeCategory}>
+                               <SelectTrigger><SelectValue /></SelectTrigger>
+                               <SelectContent>
+                                   <SelectItem value="below_60">Below 60</SelectItem>
+                                   <SelectItem value="60_to_80">60 to 80 (Senior Citizen)</SelectItem>
+                                   <SelectItem value="above_80">Above 80 (Super Senior)</SelectItem>
+                               </SelectContent>
+                           </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Tax Regime</Label>
+                            <RadioGroup value={taxRegime} onValueChange={setTaxRegime} className="flex space-x-4 pt-2">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="new" id="new-regime" />
+                                    <Label htmlFor="new-regime">New</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="old" id="old-regime" />
+                                    <Label htmlFor="old-regime">Old</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
                     </CardContent>
                 </Card>
+
+                <Tabs defaultValue="income" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="income">Income Details</TabsTrigger>
+                        <TabsTrigger value="deductions" disabled={taxRegime === 'new'}>Deductions</TabsTrigger>
+                        <TabsTrigger value="hra" disabled={taxRegime === 'new'}>HRA Exemption</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="income">
+                        <Card>
+                            <CardHeader><CardTitle>Income Details</CardTitle></CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1"><Label>Gross salary income</Label><Input type="text" value={formatCurrency(grossSalary)} onChange={handleInputChange(setGrossSalary)} /></div>
+                                <div className="space-y-1"><Label>Income from other sources</Label><Input type="text" value={formatCurrency(otherSources)} onChange={handleInputChange(setOtherSources)} /></div>
+                                <div className="space-y-1"><Label>Income from interest</Label><Input type="text" value={formatCurrency(interestIncome)} onChange={handleInputChange(setInterestIncome)} /></div>
+                                <div className="space-y-1"><Label>Rental income (let-out)</Label><Input type="text" value={formatCurrency(rentalIncome)} onChange={handleInputChange(setRentalIncome)} /></div>
+                                <div className="space-y-1"><Label>Interest on home loan (self-occupied)</Label><Input type="text" value={formatCurrency(interestSelfOccupied)} onChange={handleInputChange(setInterestSelfOccupied)} /></div>
+                                <div className="space-y-1"><Label>Interest on home loan (let-out)</Label><Input type="text" value={formatCurrency(interestLetOut)} onChange={handleInputChange(setInterestLetOut)} /></div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                     <TabsContent value="deductions">
+                        <Card>
+                            <CardHeader><CardTitle>Deductions</CardTitle></CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1"><Label>Basic Deductions u/s 80C</Label><Input type="text" value={formatCurrency(basicDeductions80C)} onChange={handleInputChange(setBasicDeductions80C)} /></div>
+                                <div className="space-y-1"><Label>Contribution to NPS u/s 80CCD(1B)</Label><Input type="text" value={formatCurrency(npsContribution)} onChange={handleInputChange(setNpsContribution)} /></div>
+                                <div className="space-y-1"><Label>Medical Insurance Premium u/s 80D</Label><Input type="text" value={formatCurrency(medicalPremium)} onChange={handleInputChange(setMedicalPremium)} /></div>
+                                <div className="space-y-1"><Label>Donation to charity u/s 80G</Label><Input type="text" value={formatCurrency(donation)} onChange={handleInputChange(setDonation)} /></div>
+                                <div className="space-y-1"><Label>Interest on Educational Loan u/s 80E</Label><Input type="text" value={formatCurrency(educationLoanInterest)} onChange={handleInputChange(setEducationLoanInterest)} /></div>
+                                <div className="space-y-1"><Label>Interest on Deposits u/s 80TTA/TTB</Label><Input type="text" value={formatCurrency(savingsInterest)} onChange={handleInputChange(setSavingsInterest)} /></div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="hra">
+                        <Card>
+                            <CardHeader><CardTitle>HRA Exemption</CardTitle></CardHeader>
+                            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1"><Label>Basic Salary per annum</Label><Input type="text" value={formatCurrency(hraBasicSalary)} onChange={handleInputChange(setHraBasicSalary)} /></div>
+                                <div className="space-y-1"><Label>Dearness Allowance (DA) per annum</Label><Input type="text" value={formatCurrency(hraDa)} onChange={handleInputChange(setHraDa)} /></div>
+                                <div className="space-y-1"><Label>HRA received per annum</Label><Input type="text" value={formatCurrency(hraReceived)} onChange={handleInputChange(setHraReceived)} /></div>
+                                <div className="space-y-1"><Label>Total rent paid per annum</Label><Input type="text" value={formatCurrency(rentPaid)} onChange={handleInputChange(setRentPaid)} /></div>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
+                <Button onClick={handleCalculate} className="w-full text-lg">Calculate Tax</Button>
             </div>
+
+            <Card className="lg:col-span-1 h-fit sticky top-24">
+                <CardHeader>
+                    <CardTitle>Tax Summary</CardTitle>
+                    <CardDescription>Based on the {taxRegime === 'new' ? 'New' : 'Old'} Tax Regime.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 text-center">
+                    {showResults ? (
+                        <>
+                            <Card className="p-4">
+                                <CardDescription>Taxable Income</CardDescription>
+                                <p className="text-2xl font-bold">
+                                    {formatCurrency(taxableIncome)}
+                                </p>
+                            </Card>
+                            <Card className="p-4">
+                                <CardDescription>Effective Tax Rate</CardDescription>
+                                <p className="text-2xl font-bold">
+                                    {effectiveTaxRate.toFixed(2)}%
+                                </p>
+                            </Card>
+                             <Card className="p-6 bg-primary/10">
+                                <CardDescription>Total Tax Payable</CardDescription>
+                                 <CopyToClipboard value={taxPayable}>
+                                    <p className="text-3xl font-bold text-primary">{formatCurrency(taxPayable)}</p>
+                                </CopyToClipboard>
+                            </Card>
+                        </>
+                    ) : (
+                        <p className="text-muted-foreground py-12">Click "Calculate Tax" to see your results.</p>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     </div>
   );
 }
+
+    
