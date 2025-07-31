@@ -1,22 +1,60 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, formatLakhs } from '@/lib/formatters';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
+} from "@/components/ui/chart"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
+
+
+const chartConfig = {
+    balance: {
+      label: "Investment Balance",
+      color: "hsl(var(--primary))",
+    },
+}
+
 
 export function SwpCalculator() {
   const [totalInvestment, setTotalInvestment] = useState(1000000);
   const [withdrawalPerMonth, setWithdrawalPerMonth] = useState(8000);
   const [expectedReturnRate, setExpectedReturnRate] = useState(7);
+  const [timePeriod, setTimePeriod] = useState(10);
+
 
   const [monthsLasts, setMonthsLasts] = useState(0);
   const [totalWithdrawn, setTotalWithdrawn] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
+
+  const chartData = useMemo(() => {
+    const data = [];
+    let balance = totalInvestment;
+    const monthlyRate = expectedReturnRate / 100 / 12;
+
+    for (let year = 1; year <= timePeriod; year++) {
+        for (let month = 1; month <= 12; month++) {
+            balance = balance * (1 + monthlyRate) - withdrawalPerMonth;
+        }
+        data.push({
+            year: `Year ${year}`,
+            balance: Math.max(0, balance),
+        });
+        if (balance <= 0) break;
+    }
+    return data;
+  }, [totalInvestment, withdrawalPerMonth, expectedReturnRate, timePeriod]);
+
 
   useEffect(() => {
     const P = totalInvestment;
@@ -131,6 +169,26 @@ export function SwpCalculator() {
                             step={0.5}
                         />
                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="time-period">Time Period (Years)</Label>
+                        <Input
+                            id="time-period"
+                             type="text"
+                            value={timePeriod}
+                             onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setTimePeriod(value);
+                            }}
+                            className="text-lg font-semibold"
+                        />
+                        <Slider
+                            value={[timePeriod]}
+                            onValueChange={(vals) => setTimePeriod(vals[0])}
+                            min={1}
+                            max={40}
+                            step={1}
+                        />
+                    </div>
                 </CardContent>
             </Card>
 
@@ -163,13 +221,32 @@ export function SwpCalculator() {
                 </div>
                  <Card>
                     <CardHeader>
-                        <CardTitle>Summary</CardTitle>
+                        <CardTitle>Investment Balance Over Time</CardTitle>
+                        <CardDescription>Projected balance of your investment over {timePeriod} years.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-center">
-                            With an initial investment of <span className="font-semibold">{formatCurrency(totalInvestment)}</span> and monthly withdrawals of <span className="font-semibold">{formatCurrency(withdrawalPerMonth)}</span>, assuming an annual return of <span className="font-semibold">{expectedReturnRate}%</span>, your funds are projected to last for <span className="font-semibold text-primary">{formatYearsMonths(monthsLasts)}</span>.
-                            {monthsLasts !== Infinity && ` During this period, you will have withdrawn a total of ${formatCurrency(totalWithdrawn)}.`}
-                        </p>
+                        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chartData}>
+                                    <defs>
+                                        <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--color-balance)" stopOpacity={0.8}/>
+                                        <stop offset="95%" stopColor="var(--color-balance)" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid vertical={false} />
+                                    <XAxis dataKey="year" tickLine={false} tickMargin={10} axisLine={false} />
+                                    <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value as number)} />
+                                    <ChartTooltip
+                                        cursor={false}
+                                        content={<ChartTooltipContent 
+                                            formatter={(value, name) => [formatCurrency(value as number), 'Balance']}
+                                        />}
+                                    />
+                                    <Area type="monotone" dataKey="balance" stroke="var(--color-balance)" fill="url(#colorBalance)" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
                     </CardContent>
                 </Card>
             </div>
