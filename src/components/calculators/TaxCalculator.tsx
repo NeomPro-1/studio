@@ -282,7 +282,7 @@ export function TaxCalculator() {
                                 <CardDescription>Total Tax Payable</CardDescription>
                                  <CopyToClipboard value={taxPayable}>
                                     <p className="text-3xl font-bold text-primary">{formatCurrency(taxPayable)}</p>
-                                </CopyToClipboard>
+                                 </CopyToClipboard>
                             </Card>
                         </>
                     ) : (
