@@ -86,7 +86,7 @@ export function SipCalculator() {
                         <Input
                             id="monthly-investment"
                             type="text"
-                            value={`₹ ${monthlyInvestment.toLocaleString('en-IN')}`}
+                            value={formatCurrency(monthlyInvestment)}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setMonthlyInvestment(value);
@@ -206,5 +206,5 @@ export function SipCalculator() {
             </div>
         </div>
     </div>
-  )
+  );
 }

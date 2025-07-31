@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -71,7 +72,7 @@ export function LumpsumCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="principal">Principal Amount (₹)</Label>
+                        <Label htmlFor="principal">Principal Amount</Label>
                         <Input
                             id="principal"
                             type="text"
@@ -195,5 +196,5 @@ export function LumpsumCalculator() {
             </div>
         </div>
     </div>
-  )
+  );
 }

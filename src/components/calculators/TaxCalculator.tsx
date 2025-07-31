@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -105,7 +106,7 @@ export function TaxCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="income">Annual Income (from salary) (₹)</Label>
+                        <Label htmlFor="income">Annual Income (from salary)</Label>
                         <Input
                             id="income"
                             type="text"
@@ -180,5 +181,5 @@ export function TaxCalculator() {
             </div>
         </div>
     </div>
-  )
+  );
 }

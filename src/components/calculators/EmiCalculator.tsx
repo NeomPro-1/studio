@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -77,7 +78,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="loan-amount">Loan Amount (₹)</Label>
+                        <Label htmlFor="loan-amount">Loan Amount</Label>
                         <Input
                             id="loan-amount"
                             type="text"
@@ -178,7 +179,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                                 <PieChart>
                                     <ChartTooltip
                                         cursor={false}
-                                        content={<ChartTooltipContent hideLabel formatter={(value, name) => [formatCurrency(value), name]} />}
+                                        content={<ChartTooltipContent hideLabel formatter={(value) => formatCurrency(value as number)} />}
                                     />
                                     <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={80} startAngle={90} endAngle={450}>
                                         {chartData.map((entry, index) => (
