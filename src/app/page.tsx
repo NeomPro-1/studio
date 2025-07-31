@@ -33,9 +33,11 @@ export default function Home() {
                   </div>
                   <CardDescription>{calculator.description}</CardDescription>
                 </CardHeader>
-                <div className="p-6 pt-0 flex justify-end items-center text-sm font-semibold text-primary group-hover:text-accent-foreground">
-                  Calculate
-                  <ArrowRight className="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" />
+                <div className="p-4 pt-0">
+                  <div className="flex justify-end items-center text-sm font-semibold text-primary rounded-md p-2 group-hover:bg-accent/20 transition-colors duration-300">
+                    Calculate
+                    <ArrowRight className="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1" />
+                  </div>
                 </div>
               </Card>
             </Link>
