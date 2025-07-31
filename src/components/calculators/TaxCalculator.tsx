@@ -49,17 +49,17 @@ const calculateTaxInternal = (income: number, slabs: typeof oldSlabs_below60) =>
 
     for (const slab of slabs) {
         if (remainingIncome <= 0) break;
-        
-        const slabRange = slab.limit - lastLimit;
-        const taxableInSlab = Math.min(remainingIncome, slabRange);
 
+        const slabAmount = slab.limit - lastLimit;
+        const taxableInSlab = Math.min(remainingIncome, slabAmount);
+        
         tax += taxableInSlab * slab.rate;
         remainingIncome -= taxableInSlab;
         lastLimit = slab.limit;
-        
-        if (slab.limit === Infinity) {
-             tax += remainingIncome * slab.rate;
-             break;
+
+        if (slab.limit === Infinity && remainingIncome > 0) {
+            tax += remainingIncome * slab.rate;
+            break;
         }
     }
     return tax;
@@ -101,39 +101,42 @@ export function TaxCalculator() {
 
   const handleCalculate = () => {
     // --- Calculate Total Income ---
-    const totalIncome = grossSalary + otherSources + interestIncome + rentalIncome;
+    const totalGrossIncome = grossSalary + otherSources + interestIncome + rentalIncome;
 
-    // --- HRA Exemption ---
-    const hraExemption = Math.min(
-        hraReceived,
-        (hraBasicSalary + hraDa) * 0.5, // Assuming metro city for simplicity
-        rentPaid - (hraBasicSalary + hraDa) * 0.1
-    );
-    const finalHraExemption = Math.max(0, hraExemption);
-
-    // --- Deductions ---
-    const totalDeductions = 
-        Math.min(150000, basicDeductions80C) +
-        Math.min(50000, npsContribution) +
-        Math.min(25000, medicalPremium) + // Assuming below 60
-        donation +
-        educationLoanInterest +
-        Math.min(10000, savingsInterest) +
-        Math.min(200000, interestSelfOccupied) +
-        interestLetOut;
-    
     let finalTaxableIncome = 0;
     let finalTax = 0;
-    const grossTotalIncome = totalIncome - finalHraExemption;
 
     if (taxRegime === 'old') {
-      finalTaxableIncome = Math.max(0, grossTotalIncome - totalDeductions);
+      // --- HRA Exemption ---
+      const hraExemption = Math.min(
+          hraReceived,
+          (hraBasicSalary + hraDa) * 0.5, // Assuming metro city for simplicity
+          rentPaid - (hraBasicSalary + hraDa) * 0.1
+      );
+      const finalHraExemption = Math.max(0, hraExemption);
+
+      // --- Deductions ---
+      const totalDeductions =
+          Math.min(150000, basicDeductions80C) +
+          Math.min(50000, npsContribution) +
+          Math.min(25000, medicalPremium) + // Assuming below 60
+          donation +
+          educationLoanInterest +
+          Math.min(10000, savingsInterest) +
+          Math.min(200000, interestSelfOccupied) +
+          interestLetOut +
+          50000; // Standard Deduction
+
+      const grossTaxableIncome = totalGrossIncome - finalHraExemption;
+      finalTaxableIncome = Math.max(0, grossTaxableIncome - totalDeductions);
+      
       let slabs;
       if (ageCategory === 'below_60') slabs = oldSlabs_below60;
       else if (ageCategory === '60_to_80') slabs = oldSlabs_60_to_80;
       else slabs = oldSlabs_above80;
 
       let tax = calculateTaxInternal(finalTaxableIncome, slabs);
+      
       // Rebate under 87A for old regime
       if (finalTaxableIncome <= 500000) {
         tax = 0;
@@ -142,7 +145,8 @@ export function TaxCalculator() {
       finalTax = tax > 0 ? tax + cess : 0;
 
     } else { // New Regime
-      finalTaxableIncome = Math.max(0, grossSalary - 50000) + otherSources + interestIncome + rentalIncome; // Standard deduction on salary
+      const standardDeduction = 50000;
+      finalTaxableIncome = Math.max(0, totalGrossIncome - standardDeduction);
       let tax = calculateTaxInternal(finalTaxableIncome, newSlabs);
        // Rebate under 87A for new regime
       if (finalTaxableIncome <= 700000) {
@@ -154,7 +158,7 @@ export function TaxCalculator() {
     
     setTaxableIncome(finalTaxableIncome);
     setTaxPayable(finalTax);
-    setEffectiveTaxRate(totalIncome > 0 ? (finalTax / totalIncome) * 100 : 0);
+    setEffectiveTaxRate(totalGrossIncome > 0 ? (finalTax / totalGrossIncome) * 100 : 0);
     setShowResults(true);
   };
   
@@ -299,3 +303,5 @@ export function TaxCalculator() {
     </div>
   );
 }
+
+  
