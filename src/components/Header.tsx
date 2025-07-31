@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Calculator } from "lucide-react";
-import { SmartSearch } from "@/components/SmartSearch";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function Header() {
@@ -14,14 +13,8 @@ export function Header() {
           <span className="text-xl font-bold font-headline">FinanceFriend</span>
         </Link>
         <div className="flex items-center gap-4">
-          <div className="hidden md:block">
-            <SmartSearch />
-          </div>
           <ThemeToggle />
         </div>
-      </div>
-      <div className="container mx-auto px-4 pb-4 md:hidden">
-        <SmartSearch />
       </div>
     </header>
   );
