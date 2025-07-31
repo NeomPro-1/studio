@@ -77,11 +77,15 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="loan-amount">Loan Amount</Label>
+                        <Label htmlFor="loan-amount">Loan Amount ({formatCurrency(0).charAt(0)})</Label>
                         <Input
                             id="loan-amount"
+                            type="text"
                             value={formatCurrency(loanAmount)}
-                            onChange={(e) => setLoanAmount(Number(e.target.value.replace(/[^0-9]/g, '')))}
+                            onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setLoanAmount(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                         <Slider
@@ -96,8 +100,12 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Label htmlFor="interest-rate">Interest Rate (% p.a.)</Label>
                         <Input
                             id="interest-rate"
+                            type="text"
                             value={`${interestRate} %`}
-                            onChange={(e) => setInterestRate(Number(e.target.value.replace(/[^0-9.]/g, '')))}
+                            onChange={(e) => {
+                                const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
+                                if (!isNaN(value)) setInterestRate(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                         <Slider
@@ -112,8 +120,12 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Label htmlFor="tenure">Loan Tenure (Years)</Label>
                         <Input
                             id="tenure"
+                            type="text"
                             value={`${tenure} Years`}
-                            onChange={(e) => setTenure(Number(e.target.value.replace(/[^0-9]/g, '')))}
+                            onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setTenure(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                         <Slider

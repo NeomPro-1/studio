@@ -71,11 +71,15 @@ export function LumpsumCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="principal">Principal Amount</Label>
+                        <Label htmlFor="principal">Principal Amount ({formatCurrency(0).charAt(0)})</Label>
                         <Input
                             id="principal"
+                            type="text"
                             value={formatCurrency(principal)}
-                            onChange={(e) => setPrincipal(Number(e.target.value.replace(/[^0-9]/g, '')))}
+                             onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setPrincipal(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                         <Slider
@@ -90,8 +94,12 @@ export function LumpsumCalculator() {
                         <Label htmlFor="return-rate">Expected Return Rate (p.a.)</Label>
                         <Input
                             id="return-rate"
+                            type="text"
                             value={`${returnRate} %`}
-                            onChange={(e) => setReturnRate(Number(e.target.value.replace(/[^0-9.]/g, '')))}
+                             onChange={(e) => {
+                                const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
+                                if (!isNaN(value)) setReturnRate(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                         <Slider
@@ -106,8 +114,12 @@ export function LumpsumCalculator() {
                         <Label htmlFor="time-period">Time Period (Years)</Label>
                         <Input
                             id="time-period"
+                             type="text"
                             value={`${timePeriod} Years`}
-                            onChange={(e) => setTimePeriod(Number(e.target.value.replace(/[^0-9]/g, '')))}
+                             onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setTimePeriod(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                         <Slider

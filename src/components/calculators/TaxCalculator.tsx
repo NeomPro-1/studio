@@ -28,16 +28,16 @@ const newSlabs = [
 const calculateTax = (income: number, slabs: typeof oldSlabs) => {
     let tax = 0;
     let remainingIncome = income;
+    let lastLimit = 0;
 
-    for (let i = 0; i < slabs.length; i++) {
-        const slab = slabs[i];
-        const prevSlabLimit = i === 0 ? 0 : slabs[i-1].limit;
-        
-        if (income > prevSlabLimit) {
-            const taxableInSlab = Math.min(remainingIncome, slab.limit - prevSlabLimit);
+    for (const slab of slabs) {
+        if (remainingIncome > 0) {
+            const taxableInSlab = Math.min(remainingIncome, slab.limit - lastLimit);
             tax += taxableInSlab * slab.rate;
             remainingIncome -= taxableInSlab;
-            if (remainingIncome <= 0) break;
+            lastLimit = slab.limit;
+        } else {
+            break;
         }
     }
     return tax;
@@ -54,37 +54,39 @@ export function TaxCalculator() {
 
   useEffect(() => {
     let taxableIncome = income;
-    let slabs = newSlabs;
+    let slabs;
 
     if (taxRegime === 'old') {
       taxableIncome = Math.max(0, income - deductions);
       slabs = oldSlabs;
+    } else {
+        slabs = newSlabs;
+        // Standard deduction is available in the new regime
+        taxableIncome = Math.max(0, income - 50000);
     }
     
     let tax = calculateTax(taxableIncome, slabs);
     
-    // Standard deduction for new regime
-    if (taxRegime === 'new' && income > 150000) {
-        taxableIncome = Math.max(0, income - 50000);
-        tax = calculateTax(taxableIncome, newSlabs);
-    }
-
     // Rebate under 87A
-    if (taxRegime === 'new' && taxableIncome <= 700000) {
+    if (taxRegime === 'new' && income <= 700000) { // Rebate is on total income, not taxable
         tax = 0;
     }
-    if (taxRegime === 'old' && taxableIncome <= 500000) {
+    if (taxRegime === 'old' && (income - deductions) <= 500000) { // Rebate is on taxable income
         tax = 0;
     }
 
     // Health and Education Cess
     const cess = tax * 0.04;
-    const totalTax = tax + cess;
+    const totalTax = tax > 0 ? tax + cess : 0;
 
     setTaxPayable(totalTax);
     setEffectiveTaxRate(totalTax > 0 ? (totalTax / income) * 100 : 0);
 
   }, [income, deductions, taxRegime]);
+
+  const taxableIncomeDisplay = taxRegime === 'old' 
+    ? Math.max(0, income - deductions) 
+    : income;
 
   return (
     <div className="space-y-8">
@@ -99,11 +101,15 @@ export function TaxCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="income">Annual Income (from salary)</Label>
+                        <Label htmlFor="income">Annual Income (from salary) ({formatCurrency(0).charAt(0)})</Label>
                         <Input
                             id="income"
+                            type="text"
                             value={formatCurrency(income)}
-                            onChange={(e) => setIncome(Number(e.target.value.replace(/[^0-9]/g, '')))}
+                            onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setIncome(value);
+                            }}
                             className="text-lg font-semibold"
                         />
                     </div>
@@ -111,8 +117,12 @@ export function TaxCalculator() {
                         <Label htmlFor="deductions">Total Deductions (e.g., 80C, 80D)</Label>
                         <Input
                             id="deductions"
+                            type="text"
                             value={formatCurrency(deductions)}
-                            onChange={(e) => setDeductions(Number(e.target.value.replace(/[^0-9]/g, '')))}
+                            onChange={(e) => {
+                                const value = Number(e.g.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setDeductions(value);
+                            }}
                             className="text-lg font-semibold"
                             disabled={taxRegime === 'new'}
                         />
@@ -130,7 +140,7 @@ export function TaxCalculator() {
                             </div>
                         </RadioGroup>
                         <p className="text-xs text-muted-foreground">
-                            The new tax regime is now the default option. You can opt for the old regime if it's more beneficial.
+                            The new tax regime is now the default option. You can opt for the old regime if it's more beneficial. A standard deduction of ₹50,000 is available in the new regime.
                         </p>
                     </div>
                 </CardContent>
@@ -146,7 +156,7 @@ export function TaxCalculator() {
                         <Card className="p-4">
                             <CardDescription>Taxable Income</CardDescription>
                             <p className="text-2xl font-bold">
-                                {formatCurrency(taxRegime === 'old' ? Math.max(0, income - deductions) : income)}
+                                {formatCurrency(taxableIncomeDisplay)}
                             </p>
                         </Card>
                         <Card className="p-4">
