@@ -82,8 +82,8 @@ export function SipCalculator() {
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
                         <Label htmlFor="monthly-investment">Monthly Investment (₹)</Label>
-                        <Input 
-                            id="monthly-investment" 
+                        <Input
+                            id="monthly-investment"
                             type="text"
                             value={formatCurrency(monthlyInvestment)}
                             onChange={(e) => {
@@ -102,8 +102,8 @@ export function SipCalculator() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="return-rate">Expected Return Rate (% p.a.)</Label>
-                        <Input 
-                            id="return-rate" 
+                        <Input
+                            id="return-rate"
                             type="text"
                             value={returnRate}
                             onChange={(e) => {
@@ -122,8 +122,8 @@ export function SipCalculator() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="time-period">Time Period (Years)</Label>
-                        <Input 
-                            id="time-period" 
+                        <Input
+                            id="time-period"
                             type="text"
                             value={timePeriod}
                              onChange={(e) => {
@@ -170,7 +170,7 @@ export function SipCalculator() {
                         </CardHeader>
                     </Card>
                 </div>
-                
+
                  <Card>
                     <CardHeader>
                         <CardTitle>Investment Growth</CardTitle>
@@ -185,7 +185,7 @@ export function SipCalculator() {
                                     <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value)} />
                                     <ChartTooltip
                                         cursor={false}
-                                        content={<ChartTooltipContent 
+                                        content={<ChartTooltipContent
                                             formatter={(value, name, props) => {
                                                 if (props.dataKey === 'invested' || props.dataKey === 'returns') {
                                                     return [formatCurrency(value as number), props.name];
