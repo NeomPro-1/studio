@@ -75,7 +75,7 @@ export function LumpsumCalculator() {
                         <Input
                             id="principal"
                             type="text"
-                            value={formatCurrency(principal)}
+                            value={principal.toLocaleString('en-IN')}
                              onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setPrincipal(value);
@@ -91,7 +91,7 @@ export function LumpsumCalculator() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="return-rate">Expected Return Rate (p.a.)</Label>
+                        <Label htmlFor="return-rate">Expected Return Rate (% p.a.)</Label>
                         <Input
                             id="return-rate"
                             type="text"
