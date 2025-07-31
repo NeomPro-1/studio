@@ -1,4 +1,7 @@
 export const formatCurrency = (value: number | string, symbolOnly = false) => {
+  if (symbolOnly) {
+    return '₹';
+  }
   const number = Number(value);
   if (isNaN(number)) {
     return "₹ 0";
@@ -9,11 +12,6 @@ export const formatCurrency = (value: number | string, symbolOnly = false) => {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   });
-
-  if (symbolOnly) {
-      const parts = formatter.formatToParts(0);
-      return parts.find(part => part.type === 'currency')?.value || '₹';
-  }
 
   return formatter.format(number);
 };

@@ -71,11 +71,11 @@ export function LumpsumCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="principal">Principal Amount ({formatCurrency(0, true)})</Label>
+                        <Label htmlFor="principal">Principal Amount (₹)</Label>
                         <Input
                             id="principal"
                             type="text"
-                            value={formatCurrency(principal).replace('₹', '')}
+                            value={`₹ ${principal.toLocaleString('en-IN')}`}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setPrincipal(value);

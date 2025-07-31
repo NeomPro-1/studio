@@ -113,11 +113,11 @@ export function TaxCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="income">Annual Income (from salary) ({formatCurrency(0, true)})</Label>
+                        <Label htmlFor="income">Annual Income (from salary) (₹)</Label>
                         <Input
                             id="income"
                             type="text"
-                            value={formatCurrency(income).replace('₹', '')}
+                            value={`₹ ${income.toLocaleString('en-IN')}`}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setIncome(value);
@@ -130,7 +130,7 @@ export function TaxCalculator() {
                         <Input
                             id="deductions"
                             type="text"
-                             value={formatCurrency(deductions).replace('₹', '')}
+                             value={`₹ ${deductions.toLocaleString('en-IN')}`}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setDeductions(value);

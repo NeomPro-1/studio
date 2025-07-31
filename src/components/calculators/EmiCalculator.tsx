@@ -77,11 +77,11 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="loan-amount">Loan Amount ({formatCurrency(0, true)})</Label>
+                        <Label htmlFor="loan-amount">Loan Amount (₹)</Label>
                         <Input
                             id="loan-amount"
                             type="text"
-                            value={formatCurrency(loanAmount).replace('₹', '')}
+                            value={`₹ ${loanAmount.toLocaleString('en-IN')}`}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setLoanAmount(value);
