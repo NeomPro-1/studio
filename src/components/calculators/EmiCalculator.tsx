@@ -77,11 +77,11 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="loan-amount">Loan Amount ({formatCurrency(0).charAt(0)})</Label>
+                        <Label htmlFor="loan-amount">Loan Amount ({formatCurrency(0, true)})</Label>
                         <Input
                             id="loan-amount"
                             type="text"
-                            value={formatCurrency(loanAmount)}
+                            value={loanAmount.toLocaleString('en-IN')}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setLoanAmount(value);
@@ -101,7 +101,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Input
                             id="interest-rate"
                             type="text"
-                            value={`${interestRate} %`}
+                            value={interestRate}
                             onChange={(e) => {
                                 const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
                                 if (!isNaN(value)) setInterestRate(value);
@@ -121,7 +121,7 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <Input
                             id="tenure"
                             type="text"
-                            value={`${tenure} Years`}
+                            value={tenure}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setTenure(value);

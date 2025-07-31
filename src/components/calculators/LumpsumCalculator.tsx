@@ -71,11 +71,11 @@ export function LumpsumCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="principal">Principal Amount ({formatCurrency(0).charAt(0)})</Label>
+                        <Label htmlFor="principal">Principal Amount ({formatCurrency(0, true)})</Label>
                         <Input
                             id="principal"
                             type="text"
-                            value={formatCurrency(principal)}
+                            value={principal.toLocaleString('en-IN')}
                              onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setPrincipal(value);
@@ -95,7 +95,7 @@ export function LumpsumCalculator() {
                         <Input
                             id="return-rate"
                             type="text"
-                            value={`${returnRate} %`}
+                            value={returnRate}
                              onChange={(e) => {
                                 const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
                                 if (!isNaN(value)) setReturnRate(value);
@@ -115,7 +115,7 @@ export function LumpsumCalculator() {
                         <Input
                             id="time-period"
                              type="text"
-                            value={`${timePeriod} Years`}
+                            value={timePeriod}
                              onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setTimePeriod(value);

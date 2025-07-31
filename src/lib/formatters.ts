@@ -1,14 +1,21 @@
-export const formatCurrency = (value: number | string) => {
+export const formatCurrency = (value: number | string, symbolOnly = false) => {
   const number = Number(value);
   if (isNaN(number)) {
     return "₹ 0";
   }
-  return new Intl.NumberFormat('en-IN', {
+  const formatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(number);
+  });
+
+  if (symbolOnly) {
+      const parts = formatter.formatToParts(0);
+      return parts.find(part => part.type === 'currency')?.value || '₹';
+  }
+
+  return formatter.format(number);
 };
 
 export const formatPercentage = (value: number | string) => {

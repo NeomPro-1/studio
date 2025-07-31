@@ -81,11 +81,11 @@ export function SipCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="monthly-investment">Monthly Investment ({formatCurrency(0).charAt(0)})</Label>
+                        <Label htmlFor="monthly-investment">Monthly Investment ({formatCurrency(0, true)})</Label>
                         <Input 
                             id="monthly-investment" 
                             type="text"
-                            value={formatCurrency(monthlyInvestment)}
+                            value={monthlyInvestment.toLocaleString('en-IN')}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setMonthlyInvestment(value);
@@ -105,7 +105,7 @@ export function SipCalculator() {
                         <Input 
                             id="return-rate" 
                             type="text"
-                            value={`${returnRate} %`}
+                            value={returnRate}
                             onChange={(e) => {
                                 const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
                                 if (!isNaN(value)) setReturnRate(value);
@@ -125,7 +125,7 @@ export function SipCalculator() {
                         <Input 
                             id="time-period" 
                             type="text"
-                            value={`${timePeriod} Years`}
+                            value={timePeriod}
                              onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setTimePeriod(value);

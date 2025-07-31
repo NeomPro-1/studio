@@ -27,19 +27,29 @@ const newSlabs = [
 
 const calculateTax = (income: number, slabs: typeof oldSlabs) => {
     let tax = 0;
-    let remainingIncome = income;
-    let lastLimit = 0;
+    let taxableIncome = income;
 
+    if (slabs === oldSlabs && income <= 500000) {
+        return 0; // Tax rebate under section 87A
+    }
+    
+    if (slabs === newSlabs && income <= 700000) {
+        return 0; // Tax rebate under section 87A
+    }
+
+    let lastLimit = 0;
     for (const slab of slabs) {
-        if (remainingIncome > 0) {
-            const taxableInSlab = Math.min(remainingIncome, slab.limit - lastLimit);
-            tax += taxableInSlab * slab.rate;
-            remainingIncome -= taxableInSlab;
+        if (taxableIncome > (slab.limit - lastLimit)) {
+            tax += (slab.limit - lastLimit) * slab.rate;
+            taxableIncome -= (slab.limit - lastLimit);
             lastLimit = slab.limit;
         } else {
+            tax += taxableIncome * slab.rate;
+            taxableIncome = 0;
             break;
         }
     }
+
     return tax;
 };
 
@@ -53,25 +63,27 @@ export function TaxCalculator() {
   const [effectiveTaxRate, setEffectiveTaxRate] = useState(0);
 
   useEffect(() => {
-    let taxableIncome = income;
+    let taxableIncome;
     let slabs;
+    let totalIncomeForRebate = income;
 
     if (taxRegime === 'old') {
       taxableIncome = Math.max(0, income - deductions);
       slabs = oldSlabs;
     } else {
-        slabs = newSlabs;
-        // Standard deduction is available in the new regime
-        taxableIncome = Math.max(0, income - 50000);
+      // Standard deduction of 50,000 is available in the new regime for salary/pension income
+      taxableIncome = Math.max(0, income - 50000);
+      slabs = newSlabs;
+      totalIncomeForRebate = income; // Rebate on gross income
     }
     
     let tax = calculateTax(taxableIncome, slabs);
     
     // Rebate under 87A
-    if (taxRegime === 'new' && income <= 700000) { // Rebate is on total income, not taxable
+    if (taxRegime === 'new' && totalIncomeForRebate <= 700000) {
         tax = 0;
     }
-    if (taxRegime === 'old' && (income - deductions) <= 500000) { // Rebate is on taxable income
+    if (taxRegime === 'old' && taxableIncome <= 500000) {
         tax = 0;
     }
 
@@ -86,7 +98,7 @@ export function TaxCalculator() {
 
   const taxableIncomeDisplay = taxRegime === 'old' 
     ? Math.max(0, income - deductions) 
-    : income;
+    : Math.max(0, income - 50000);
 
   return (
     <div className="space-y-8">
@@ -101,11 +113,11 @@ export function TaxCalculator() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="space-y-2">
-                        <Label htmlFor="income">Annual Income (from salary) ({formatCurrency(0).charAt(0)})</Label>
+                        <Label htmlFor="income">Annual Income (from salary) ({formatCurrency(0, true)})</Label>
                         <Input
                             id="income"
                             type="text"
-                            value={formatCurrency(income)}
+                            value={income.toLocaleString('en-IN')}
                             onChange={(e) => {
                                 const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setIncome(value);
@@ -118,9 +130,9 @@ export function TaxCalculator() {
                         <Input
                             id="deductions"
                             type="text"
-                            value={formatCurrency(deductions)}
+                            value={deductions.toLocaleString('en-IN')}
                             onChange={(e) => {
-                                const value = Number(e.g.value.replace(/[^0-9]/g, ''));
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
                                 if (!isNaN(value)) setDeductions(value);
                             }}
                             className="text-lg font-semibold"
