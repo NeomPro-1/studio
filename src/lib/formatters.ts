@@ -18,3 +18,12 @@ export const formatPercentage = (value: number | string) => {
     }
     return `${number.toFixed(2)}%`;
 }
+
+export const formatLakhs = (value: number | string) => {
+  const number = Number(value);
+  if (isNaN(number)) {
+    return "₹ 0 L";
+  }
+  const lakhs = number / 100000;
+  return `₹${lakhs.toFixed(2)} L`;
+}

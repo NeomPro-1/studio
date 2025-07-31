@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, formatLakhs } from '@/lib/formatters';
 import { CopyToClipboard } from '@/components/CopyToClipboard';
 import {
   ChartContainer,
@@ -160,7 +160,7 @@ export function LumpsumCalculator() {
                                 <BarChart data={chartData}>
                                     <CartesianGrid vertical={false} />
                                     <XAxis dataKey="year" tickLine={false} tickMargin={10} axisLine={false} />
-                                    <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `₹${Number(value) / 100000}L`} />
+                                    <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value)} />
                                     <ChartTooltip
                                         cursor={false}
                                         content={<ChartTooltipContent hideLabel />}
