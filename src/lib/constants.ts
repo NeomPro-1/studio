@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -73,6 +73,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Estimate your income tax for the financial year.",
     path: "/calculators/tax",
     icon: FileText,
+  },
+  {
+    name: "GST Calculator",
+    description: "Calculate Goods and Services Tax (GST) for any amount.",
+    path: "/calculators/gst",
+    icon: ReceiptText,
   },
 ];
 
