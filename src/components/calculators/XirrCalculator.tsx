@@ -119,12 +119,24 @@ export function XirrCalculator() {
   };
   
   const handleAmountChange = (id: number, value: string) => {
+    let newAmount = 0;
     const isNegative = value.startsWith('-');
-    const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
-    let finalAmount = isNaN(numericValue) ? 0 : numericValue;
-    if (isNegative) finalAmount = -finalAmount;
-    updateRow(id, 'amount', finalAmount);
-  }
+    const numericString = value.replace(/[^0-9]/g, '');
+    
+    if (numericString) {
+      newAmount = parseInt(numericString, 10);
+      if (isNegative) {
+        newAmount = -newAmount;
+      }
+    }
+    
+    updateRow(id, 'amount', newAmount);
+  };
+
+  const displayAmount = (amount: number) => {
+    if (amount === 0) return '';
+    return formatCurrency(amount);
+  };
 
   return (
     <div className="space-y-8">
@@ -149,9 +161,9 @@ export function XirrCalculator() {
                             <div className="col-span-6">
                                 <Input
                                     type="text"
-                                    value={flow.amount !== 0 ? formatCurrency(flow.amount) : flow.amount < 0 ? '-' : ''}
+                                    value={displayAmount(flow.amount)}
                                     onChange={(e) => handleAmountChange(flow.id, e.target.value)}
-                                    placeholder="e.g., -10000 or 500"
+                                    placeholder="e.g., -100,000 or 500"
                                     className="text-base"
                                 />
                             </div>
