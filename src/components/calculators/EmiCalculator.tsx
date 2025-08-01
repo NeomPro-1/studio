@@ -12,6 +12,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent
 } from "@/components/ui/chart"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 
@@ -40,8 +42,8 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
   const [totalPayment, setTotalPayment] = useState(0);
 
   const chartData = [
-    { name: 'Principal', value: loanAmount, fill: 'var(--color-principal)' },
-    { name: 'Interest', value: totalInterest, fill: 'var(--color-interest)'  },
+    { name: 'principal', value: loanAmount, fill: 'var(--color-principal)' },
+    { name: 'interest', value: totalInterest, fill: 'var(--color-interest)'  },
   ];
 
   useEffect(() => {
@@ -181,19 +183,26 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                         <CardTitle>Loan Breakdown</CardTitle>
                         <CardDescription>Principal vs. Interest</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[250px] w-full">
+                    <CardContent className="flex-1 pb-0">
+                         <ChartContainer
+                            config={chartConfig}
+                            className="mx-auto aspect-square max-h-[250px]"
+                            >
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <ChartTooltip
                                         cursor={false}
                                         content={<ChartTooltipContent hideLabel formatter={(value) => formatCurrency(value as number)} />}
                                     />
-                                    <Pie data={chartData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={80} startAngle={90} endAngle={450}>
-                                        {chartData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    <Pie data={chartData} dataKey="value" nameKey="name" innerRadius="60%" outerRadius="80%">
+                                        {chartData.map((entry) => (
+                                            <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                                         ))}
                                     </Pie>
+                                    <ChartLegend
+                                        content={<ChartLegendContent nameKey="name" />}
+                                        className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         </ChartContainer>
