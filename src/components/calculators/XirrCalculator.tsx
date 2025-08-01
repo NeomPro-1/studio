@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -139,7 +138,7 @@ export function XirrCalculator() {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
     }).format(Math.abs(amount));
-    return amount < 0 ? `-₹${formatted}` : `₹${formatted}`;
+    return amount < 0 ? `-${formatted}` : formatted;
   };
 
   return (
@@ -167,7 +166,7 @@ export function XirrCalculator() {
                                     type="text"
                                     value={displayAmount(flow.amount)}
                                     onChange={(e) => handleAmountChange(flow.id, e.target.value)}
-                                    placeholder="e.g., -₹100,000 or ₹500"
+                                    placeholder="e.g., -100,000 or 500"
                                     className="text-base"
                                 />
                             </div>

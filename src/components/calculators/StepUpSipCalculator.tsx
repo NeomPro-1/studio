@@ -257,7 +257,7 @@ export function StepUpSipCalculator() {
                     A Step-up SIP is more dynamic than a regular SIP. It allows you to increase your monthly investment amount by a fixed percentage annually, aligning your investments with your growing income and helping you reach financial goals much faster.
                 </p>
                 <p>
-                    For example, you start by investing ₹5,000 per month in the first year. In the second year, you "step up" your investment by 10%, so you start investing ₹5,500 per month. In the third year, you increase it again, and so on. This calculator shows the significant impact of making these small, regular increases.
+                    For example, you start by investing 5,000 per month in the first year. In the second year, you "step up" your investment by 10%, so you start investing 5,500 per month. In the third year, you increase it again, and so on. This calculator shows the significant impact of making these small, regular increases.
                 </p>
                 <div className="p-4 bg-muted/50 rounded-md">
                     <p className="font-mono text-center text-sm sm:text-base">
