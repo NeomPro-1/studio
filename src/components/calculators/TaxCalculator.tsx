@@ -294,6 +294,28 @@ export function TaxCalculator() {
                 </CardContent>
             </Card>
         </div>
+         <Card>
+            <CardHeader>
+                <CardTitle>About Income Tax Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    This Income Tax Calculator helps you estimate your tax liability for a financial year based on your income and eligible deductions. It supports both the Old and New Tax Regimes, allowing you to compare and choose the more beneficial option. Proper tax planning is crucial for maximizing your savings and ensuring compliance with tax laws. This tool simplifies the complex calculations involved in determining your taxable income and final tax payable.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                       Taxable Income = Gross Income - Deductions
+                    </p>
+                     <p className="font-mono text-center text-sm sm:text-base mt-2">
+                        Tax Payable = (Tax on Income as per Slabs) + Surcharge + Cess
+                    </p>
+                </div>
+                 <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">Old Regime:</span> Allows various deductions (80C, 80D, HRA etc.) but has higher tax rates.</li>
+                    <li><span className="font-semibold text-foreground">New Regime:</span> Offers lower tax rates but fewer deductions. A standard deduction of ₹50,000 is available.</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

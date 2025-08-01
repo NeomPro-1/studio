@@ -361,6 +361,27 @@ export function EmiCalculator({
                 </Tabs>
             </CardContent>
         </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle>About EMI Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    An Equated Monthly Installment (EMI) is a fixed payment amount made by a borrower to a lender at a specified date each calendar month. This calculator helps you determine your monthly loan payment, the total interest you'll pay, and the amortization schedule. It is essential for anyone taking out a loan (home, car, personal) to understand their monthly financial commitment and the total cost of borrowing.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                       E = P × r × (1 + r)^n / ((1 + r)^n - 1)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">E:</span> EMI (Equated Monthly Installment)</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Principal Loan Amount</li>
+                    <li><span className="font-semibold text-foreground">r:</span> Monthly Interest Rate (Annual Rate / 12 / 100)</li>
+                    <li><span className="font-semibold text-foreground">n:</span> Loan Tenure in Months (Years * 12)</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

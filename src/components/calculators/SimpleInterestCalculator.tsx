@@ -184,6 +184,27 @@ export function SimpleInterestCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About Simple Interest Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    Simple Interest is a quick and easy method to calculate the interest charge on a loan or principal amount. Unlike compound interest, it is calculated only on the principal amount and does not include interest on interest. This calculator is useful for understanding basic loan repayments or returns on simple savings accounts where interest is not compounded.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        A = P(1 + rt)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">A:</span> Total Accrued Amount (Principal + Interest)</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Principal Amount</li>
+                    <li><span className="font-semibold text-foreground">r:</span> Annual Interest Rate (in decimal)</li>
+                    <li><span className="font-semibold text-foreground">t:</span> Time Period in Years</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

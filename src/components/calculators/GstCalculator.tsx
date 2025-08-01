@@ -134,6 +134,28 @@ export function GstCalculator() {
                         </CardHeader>
                     </Card>
                 </div>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>About GST Calculator</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p>
+                            The Goods and Services Tax (GST) is an indirect tax applied to the supply of goods and services in India. This calculator helps you quickly add or remove GST from a price. It's a handy tool for business owners, consumers, and accountants to determine the net price or gross price of a product or service based on the applicable GST rate.
+                        </p>
+                        <div className="p-4 bg-muted/50 rounded-md">
+                            <p className="font-mono text-center text-sm sm:text-base">
+                                GST Amount = Net Amount × (GST Rate / 100)
+                            </p>
+                             <p className="font-mono text-center text-sm sm:text-base mt-2">
+                                Net Amount = Gross Amount / (1 + (GST Rate / 100))
+                            </p>
+                        </div>
+                         <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                            <li><span className="font-semibold text-foreground">Exclusive:</span> Calculates GST on top of the base amount.</li>
+                            <li><span className="font-semibold text-foreground">Inclusive:</span> Calculates the GST portion from a total amount.</li>
+                        </ul>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     </div>

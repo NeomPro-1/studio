@@ -139,6 +139,24 @@ export function RoiCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About ROI Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    Return on Investment (ROI) is a performance measure used to evaluate the efficiency or profitability of an investment. It helps you understand how much profit you have made in relation to your initial cost. This calculator provides both the total ROI over the entire period and the annualized ROI, which gives a clearer picture of yearly performance. It's a fundamental tool for comparing the profitability of different investments.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        ROI = ((Final Value - Initial Investment) / Initial Investment) * 100
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">Annualized ROI</span> is also calculated to show the yearly rate of return.</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

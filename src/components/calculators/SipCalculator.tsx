@@ -202,6 +202,27 @@ export function SipCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About SIP Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    A Systematic Investment Plan (SIP) is a disciplined way to invest a fixed amount of money at regular intervals. This calculator helps you project the future value of your SIP investments, demonstrating the power of compounding and consistent saving over time. It's a crucial tool for planning long-term financial goals like retirement, education, or wealth creation.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        M = P × ( ( (1 + i)^n - 1 ) / i ) × (1 + i)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">M:</span> Future Value (Maturity Amount)</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Monthly Investment Amount</li>
+                    <li><span className="font-semibold text-foreground">i:</span> Monthly Interest Rate (Annual Rate / 12)</li>
+                    <li><span className="font-semibold text-foreground">n:</span> Number of Months (Investment Period in Years × 12)</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

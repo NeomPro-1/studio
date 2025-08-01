@@ -206,6 +206,25 @@ export function EpfCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About EPF Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    The Employees' Provident Fund (EPF) is a retirement benefits scheme for salaried employees in India. Both employee and employer contribute a portion of the salary to the EPF account, which grows with compound interest. This calculator helps you project your total EPF corpus at retirement, factoring in your current balance, contributions, salary hikes, and interest rates. It's a vital tool for comprehensive retirement planning.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        Annual Balance = (Opening Balance + Annual Contribution) * (1 + Interest Rate)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li>This calculation is performed iteratively for each year until retirement.</li>
+                    <li>Salary increases are factored in annually to adjust contributions.</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

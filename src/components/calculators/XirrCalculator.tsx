@@ -227,6 +227,27 @@ export function XirrCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About XIRR Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                   The Extended Internal Rate of Return (XIRR) is a powerful financial metric that calculates the annualized return for an investment with multiple, irregular cash flows occurring at different times. Unlike standard ROI or CAGR, XIRR accurately accounts for the timing and amount of each cash inflow and outflow. This makes it an essential tool for evaluating the true performance of complex investments like mutual fund SIPs, real estate, and private equity.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        Σ [ CFi / (1 + r)^(di - d1)/365 ] = 0
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">CFi:</span> The cash flow (positive for inflows, negative for outflows)</li>
+                    <li><span className="font-semibold text-foreground">di:</span> The date of the i-th cash flow</li>
+                    <li><span className="font-semibold text-foreground">d1:</span> The date of the first cash flow</li>
+                    <li><span className="font-semibold text-foreground">r:</span> The XIRR rate (what we solve for)</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

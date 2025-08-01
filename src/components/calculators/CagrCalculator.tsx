@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -138,6 +139,26 @@ export function CagrCalculator() {
                 </Card>
             </div>
         </div>
+         <Card>
+            <CardHeader>
+                <CardTitle>About CAGR Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    The Compound Annual Growth Rate (CAGR) is a measure of an investment's annual growth rate over a specified time period. Unlike simple ROI, CAGR provides a smoothed-out average rate, making it a more accurate way to compare the performance of different investments. This calculator is essential for investors who want to understand the true annual growth of their investments, factoring in the effects of compounding.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        CAGR = [(Final Value / Initial Value)^(1/n)] - 1
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">Final Value:</span> The value of the investment at the end of the period.</li>
+                    <li><span className="font-semibold text-foreground">Initial Value:</span> The value of the investment at the beginning of the period.</li>
+                    <li><span className="font-semibold text-foreground">n:</span> The number of years.</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

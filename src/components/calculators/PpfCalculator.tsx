@@ -197,6 +197,27 @@ export function PpfCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About PPF Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    The Public Provident Fund (PPF) is a popular long-term, tax-saving investment scheme in India, backed by the government. This calculator helps you estimate the maturity value of your PPF account over a specified period. It's an essential tool for anyone using PPF to build a tax-free retirement corpus, fund children's education, or meet other long-term financial objectives with minimal risk.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        F = P [((1+i)^n-1)/i]
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">F:</span> Future Value of the PPF</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Annual PPF Investment</li>
+                    <li><span className="font-semibold text-foreground">i:</span> Interest Rate</li>
+                    <li><span className="font-semibold text-foreground">n:</span> Number of Years</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

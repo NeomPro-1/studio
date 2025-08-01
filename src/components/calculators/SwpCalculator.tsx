@@ -244,6 +244,27 @@ export function SwpCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About SWP Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    A Systematic Withdrawal Plan (SWP) allows you to withdraw a fixed amount of money from your investments at regular intervals. This calculator helps you determine how long your invested corpus will last based on your monthly withdrawal needs and the expected rate of return. It is an invaluable tool for retirees or anyone looking to create a steady cash flow from their investments while managing the longevity of their funds.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        n = -log(1 - (P * r) / W) / log(1 + r)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">n:</span> Number of Months the Corpus will Last</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Principal Investment Amount</li>
+                    <li><span className="font-semibold text-foreground">W:</span> Monthly Withdrawal Amount</li>
+                    <li><span className="font-semibold text-foreground">r:</span> Monthly Rate of Return</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

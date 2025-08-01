@@ -209,6 +209,28 @@ export function FdCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About Fixed Deposit (FD) Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    A Fixed Deposit (FD) is a secure investment option offered by banks and financial institutions that provides a fixed rate of interest. This calculator helps you determine the maturity amount and interest earned on your FD investment. It is ideal for risk-averse investors seeking predictable returns for their financial goals, such as saving for a down payment or creating a stable income stream.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        A = P (1 + r/n)^(nt)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">A:</span> Maturity Value</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Principal Amount</li>
+                    <li><span className="font-semibold text-foreground">r:</span> Annual Interest Rate</li>
+                    <li><span className="font-semibold text-foreground">n:</span> Compounding Frequency per Year</li>
+                    <li><span className="font-semibold text-foreground">t:</span> Time Period in Years</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

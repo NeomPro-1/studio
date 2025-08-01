@@ -193,6 +193,27 @@ export function LumpsumCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About Lumpsum Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    A lumpsum investment involves investing a single, large sum of money at one time. This calculator helps you determine the future value of that investment, showing how it can grow over a specific period due to the effect of compounding. It is essential for investors who have a substantial amount to invest at once and want to see its potential growth for goals like purchasing property or funding retirement.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        M = P × (1 + r)^t
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">M:</span> Future Value (Maturity Amount)</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Principal Amount (Lumpsum Investment)</li>
+                    <li><span className="font-semibold text-foreground">r:</span> Annual Rate of Return</li>
+                    <li><span className="font-semibold text-foreground">t:</span> Number of Years</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

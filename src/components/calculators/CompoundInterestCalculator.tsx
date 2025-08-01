@@ -209,6 +209,28 @@ export function CompoundInterestCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>About Compound Interest Calculator</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p>
+                    Compound interest is the interest on a loan or deposit calculated based on both the initial principal and the accumulated interest from previous periods. Often called "interest on interest," it is a powerful concept that can make your investments grow much faster than with simple interest. This calculator is essential for anyone looking to understand the long-term growth potential of their savings and investments.
+                </p>
+                <div className="p-4 bg-muted/50 rounded-md">
+                    <p className="font-mono text-center text-sm sm:text-base">
+                        A = P (1 + r/n)^(nt)
+                    </p>
+                </div>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">A:</span> Future Value of the Investment/Loan</li>
+                    <li><span className="font-semibold text-foreground">P:</span> Principal Amount</li>
+                    <li><span className="font-semibold text-foreground">r:</span> Annual Interest Rate (in decimal)</li>
+                    <li><span className="font-semibold text-foreground">n:</span> Number of times that interest is compounded per year</li>
+                    <li><span className="font-semibold text-foreground">t:</span> Number of years the money is invested or borrowed for</li>
+                </ul>
+            </CardContent>
+        </Card>
     </div>
   );
 }

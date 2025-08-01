@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -90,7 +91,7 @@ export function GratuityCalculator() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p>
-                            Gratuity is a benefit given by an employer to an employee for services rendered to the company. An employee is eligible for gratuity only after completing 5 or more years with the same employer.
+                            Gratuity is a benefit given by an employer to an employee for services rendered to the company. An employee is eligible for gratuity only after completing 5 or more years with the same employer. This calculator helps you estimate the lump sum amount you might receive at the end of your tenure.
                         </p>
                         <div className="p-4 bg-muted/50 rounded-md">
                             <p className="font-mono text-center text-sm sm:text-base">
