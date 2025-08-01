@@ -157,10 +157,10 @@ export function TaxCalculator() {
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<number>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       const numberValue = Number(value.replace(/[^0-9]/g, ''));
-      if (!isNaN(numberValue)) {
-        setter(numberValue);
-      } else {
+      if (value === '') {
         setter(0);
+      } else if (!isNaN(numberValue)) {
+        setter(numberValue);
       }
   };
 
@@ -237,12 +237,12 @@ export function TaxCalculator() {
                         <AccordionContent>
                              <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1"><Label>Basic Deductions u/s 80C</Label><Input type="text" value={basicDeductions80C} onChange={handleInputChange(setBasicDeductions80C)} /></div>
-                                    <div className="space-y-1"><Label>Contribution to NPS u/s 80CCD(1B)</Label><Input type="text" value={npsContribution} onChange={handleInputChange(setNpsContribution)} /></div>
-                                    <div className="space-y-1"><Label>Medical Insurance Premium u/s 80D</Label><Input type="text" value={medicalPremium} onChange={handleInputChange(setMedicalPremium)} /></div>
-                                    <div className="space-y-1"><Label>Donation to charity u/s 80G</Label><Input type="text" value={donation} onChange={handleInputChange(setDonation)} /></div>
-                                    <div className="space-y-1"><Label>Interest on Educational Loan u/s 80E</Label><Input type="text" value={educationLoanInterest} onChange={handleInputChange(setEducationLoanInterest)} /></div>
-                                    <div className="space-y-1"><Label>Interest on Deposits u/s 80TTA/TTB</Label><Input type="text" value={savingsInterest} onChange={handleInputChange(setSavingsInterest)} /></div>
+                                    <div className="space-y-1"><Label>Basic Deductions u/s 80C</Label><Input type="text" value={basicDeductions80C} onChange={handleInputChange(setBasicDeductions80C)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Contribution to NPS u/s 80CCD(1B)</Label><Input type="text" value={npsContribution} onChange={handleInputChange(setNpsContribution)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Medical Insurance Premium u/s 80D</Label><Input type="text" value={medicalPremium} onChange={handleInputChange(setMedicalPremium)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Donation to charity u/s 80G</Label><Input type="text" value={donation} onChange={handleInputChange(setDonation)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Interest on Educational Loan u/s 80E</Label><Input type="text" value={educationLoanInterest} onChange={handleInputChange(setEducationLoanInterest)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Interest on Deposits u/s 80TTA/TTB</Label><Input type="text" value={savingsInterest} onChange={handleInputChange(setSavingsInterest)} disabled={!isOldRegime} /></div>
                                 </CardContent>
                             </Card>
                         </AccordionContent>
@@ -252,10 +252,10 @@ export function TaxCalculator() {
                         <AccordionContent>
                             <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1"><Label>Basic Salary per annum</Label><Input type="text" value={hraBasicSalary} onChange={handleInputChange(setHraBasicSalary)} /></div>
-                                    <div className="space-y-1"><Label>Dearness Allowance (DA) per annum</Label><Input type="text" value={hraDa} onChange={handleInputChange(setHraDa)} /></div>
-                                    <div className="space-y-1"><Label>HRA received per annum</Label><Input type="text" value={hraReceived} onChange={handleInputChange(setHraReceived)} /></div>
-                                    <div className="space-y-1"><Label>Total rent paid per annum</Label><Input type="text" value={rentPaid} onChange={handleInputChange(setRentPaid)} /></div>
+                                    <div className="space-y-1"><Label>Basic Salary per annum</Label><Input type="text" value={hraBasicSalary} onChange={handleInputChange(setHraBasicSalary)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Dearness Allowance (DA) per annum</Label><Input type="text" value={hraDa} onChange={handleInputChange(setHraDa)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>HRA received per annum</Label><Input type="text" value={hraReceived} onChange={handleInputChange(setHraReceived)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Total rent paid per annum</Label><Input type="text" value={rentPaid} onChange={handleInputChange(setRentPaid)} disabled={!isOldRegime} /></div>
                                 </CardContent>
                             </Card>
                         </AccordionContent>
@@ -300,3 +300,5 @@ export function TaxCalculator() {
     </div>
   );
 }
+
+    
