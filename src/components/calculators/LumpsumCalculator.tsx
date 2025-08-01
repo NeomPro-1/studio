@@ -15,16 +15,16 @@ import {
   ChartLegend,
   ChartLegendContent
 } from "@/components/ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
 
 const chartConfig = {
     invested: {
       label: "Invested Amount",
-      color: "hsl(var(--primary))",
+      color: "hsl(var(--chart-2))",
     },
-    returns: {
-      label: "Est. Returns",
-      color: "hsl(var(--accent))",
+    total: {
+      label: "Total Value",
+      color: "hsl(var(--primary))",
     },
 }
 
@@ -37,13 +37,12 @@ export function LumpsumCalculator() {
   const [estReturns, setEstReturns] = useState(0);
 
   const chartData = useMemo(() => {
-    const data = [];
+    const data = [{ year: 'Year 0', invested: principal, total: principal }];
     for (let year = 1; year <= timePeriod; year++) {
         const futureValue = principal * Math.pow(1 + returnRate / 100, year);
         data.push({
             year: `Year ${year}`,
             invested: principal,
-            returns: Math.round(futureValue - principal),
             total: Math.round(futureValue)
         });
     }
@@ -164,31 +163,37 @@ export function LumpsumCalculator() {
 
                  <Card>
                     <CardHeader>
-                        <CardTitle>Investment Growth</CardTitle>
+                        <CardTitle>Wealth Projection</CardTitle>
                         <CardDescription>Projected growth of your investment over {timePeriod} years.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                       <ChartContainer config={chartConfig} className="h-[300px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartData}>
+                                <AreaChart data={chartData}>
+                                     <defs>
+                                        <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="var(--color-total)" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="var(--color-total)" stopOpacity={0.1}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorInvested" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="var(--color-invested)" stopOpacity={0.8}/>
+                                            <stop offset="95%" stopColor="var(--color-invested)" stopOpacity={0.1}/>
+                                        </linearGradient>
+                                    </defs>
                                     <CartesianGrid vertical={false} />
                                     <XAxis dataKey="year" tickLine={false} tickMargin={10} axisLine={false} />
-                                    <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value)} />
+                                    <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => formatLakhs(value as number)} />
                                     <ChartTooltip
                                         cursor={false}
                                         content={<ChartTooltipContent 
-                                            formatter={(value, name, props) => {
-                                                if (props.dataKey === 'invested' || props.dataKey === 'returns') {
-                                                    return [formatCurrency(value as number), props.name];
-                                                }
-                                                return [value, name];
-                                            }}
+                                            formatter={(value, name) => [formatCurrency(value as number), chartConfig[name as keyof typeof chartConfig]?.label]}
+                                            labelClassName="font-bold"
                                         />}
                                     />
                                     <ChartLegend content={<ChartLegendContent />} />
-                                    <Bar dataKey="invested" fill="var(--color-invested)" stackId="a" radius={[0, 0, 4, 4]} />
-                                    <Bar dataKey="returns" fill="var(--color-returns)" stackId="a" radius={[4, 4, 0, 0]}/>
-                                </BarChart>
+                                    <Area type="monotone" dataKey="invested" stackId="1" stroke="var(--color-invested)" fill="url(#colorInvested)" />
+                                    <Area type="monotone" dataKey="total" stackId="2" stroke="var(--color-total)" fill="url(#colorTotal)" />
+                                </AreaChart>
                             </ResponsiveContainer>
                         </ChartContainer>
                     </CardContent>
