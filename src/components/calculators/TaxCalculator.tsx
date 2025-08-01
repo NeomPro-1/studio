@@ -156,7 +156,7 @@ export function TaxCalculator() {
   
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<number>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value.replace(/[^0-9]/g, '');
-      setter(Number(value));
+      setter(value === '' ? 0 : Number(value));
   };
 
   const isOldRegime = taxRegime === 'old';
@@ -211,7 +211,7 @@ export function TaxCalculator() {
                     </CardContent>
                 </Card>
 
-                <Accordion type="multiple" className="w-full">
+                <Accordion type="multiple" defaultValue={["income-details"]} className="w-full">
                     <AccordionItem value="income-details">
                         <AccordionTrigger className="text-lg font-semibold">Income Details</AccordionTrigger>
                         <AccordionContent>
