@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -11,17 +12,25 @@ import { Slider } from '@/components/ui/slider';
 export function RoiCalculator() {
   const [initialInvestment, setInitialInvestment] = useState(100000);
   const [finalValue, setFinalValue] = useState(150000);
+  const [duration, setDuration] = useState(5);
   
   const [roi, setRoi] = useState(0);
+  const [annualizedRoi, setAnnualizedRoi] = useState(0);
   const [netProfit, setNetProfit] = useState(0);
 
   useEffect(() => {
     const profit = finalValue - initialInvestment;
-    const calculatedRoi = initialInvestment > 0 ? (profit / initialInvestment) * 100 : 0;
+    const totalRoi = initialInvestment > 0 ? (profit / initialInvestment) * 100 : 0;
     
+    let annualRoi = 0;
+    if (initialInvestment > 0 && finalValue > 0 && duration > 0) {
+      annualRoi = (Math.pow(finalValue / initialInvestment, 1 / duration) - 1) * 100;
+    }
+
     setNetProfit(profit);
-    setRoi(calculatedRoi);
-  }, [initialInvestment, finalValue]);
+    setRoi(totalRoi);
+    setAnnualizedRoi(annualRoi);
+  }, [initialInvestment, finalValue, duration]);
 
   return (
     <div className="space-y-8">
@@ -75,11 +84,31 @@ export function RoiCalculator() {
                             step={1000}
                         />
                     </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="duration">Duration of Investment (Years)</Label>
+                        <Input
+                            id="duration"
+                            type="text"
+                            value={duration}
+                            onChange={(e) => {
+                                const value = Number(e.target.value.replace(/[^0-9]/g, ''));
+                                if (!isNaN(value)) setDuration(value);
+                            }}
+                            className="text-lg font-semibold"
+                        />
+                         <Slider
+                            value={[duration]}
+                            onValueChange={(vals) => setDuration(vals[0])}
+                            min={1}
+                            max={40}
+                            step={1}
+                        />
+                    </div>
                 </CardContent>
             </Card>
 
             <div className="lg:col-span-2 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                     <Card>
                         <CardHeader>
                             <CardDescription>Net Profit</CardDescription>
@@ -90,9 +119,17 @@ export function RoiCalculator() {
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardDescription>Return on Investment (ROI)</CardDescription>
+                            <CardDescription>Total ROI</CardDescription>
                              <CopyToClipboard value={roi}>
-                                <p className="text-2xl font-bold text-primary">{formatPercentage(roi)}</p>
+                                <p className="text-2xl font-bold">{formatPercentage(roi)}</p>
+                            </CopyToClipboard>
+                        </CardHeader>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardDescription>Annualized ROI</CardDescription>
+                             <CopyToClipboard value={annualizedRoi}>
+                                <p className="text-2xl font-bold text-primary">{formatPercentage(annualizedRoi)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -103,7 +140,7 @@ export function RoiCalculator() {
                     </CardHeader>
                     <CardContent>
                         <p className="text-center">
-                            An initial investment of <span className="font-semibold">{formatCurrency(initialInvestment)}</span> that resulted in a final value of <span className="font-semibold">{formatCurrency(finalValue)}</span> yields a net profit of <span className="font-semibold">{formatCurrency(netProfit)}</span> and a total return on investment of <span className="font-semibold text-primary">{formatPercentage(roi)}</span>.
+                            An initial investment of <span className="font-semibold">{formatCurrency(initialInvestment)}</span> that grew to <span className="font-semibold">{formatCurrency(finalValue)}</span> over <span className="font-semibold">{duration} years</span> yields a net profit of <span className="font-semibold">{formatCurrency(netProfit)}</span>. This represents a total return of <span className="font-semibold">{formatPercentage(roi)}</span> and an annualized return of <span className="font-semibold text-primary">{formatPercentage(annualizedRoi)}</span>.
                         </p>
                     </CardContent>
                 </Card>
