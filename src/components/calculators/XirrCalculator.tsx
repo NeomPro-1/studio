@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -24,7 +24,7 @@ type CashFlow = {
 function calculateXIRR(cashFlows: { amount: number; date: Date }[]): number {
   if (cashFlows.length < 2) return 0;
 
-  const validFlows = cashFlows.filter(cf => cf.date && !isNaN(cf.amount));
+  const validFlows = cashFlows.filter(cf => cf.date && !isNaN(cf.amount) && cf.amount !== 0);
   if (validFlows.length < 2) return 0;
   
   let hasPositive = false;
@@ -71,23 +71,38 @@ function calculateXIRR(cashFlows: { amount: number; date: Date }[]): number {
     }
     guess = newGuess;
   }
-  return 0; // Or indicate failure
+  return NaN; // Indicate failure
 }
 
 
 export function XirrCalculator() {
   const today = new Date();
   const [cashFlows, setCashFlows] = useState<CashFlow[]>([
-    { id: 1, amount: -10000, date: new Date(today.getFullYear() -1, today.getMonth(), today.getDate()) },
-    { id: 2, amount: 2000, date: new Date(today.getFullYear(), today.getMonth() - 6, today.getDate()) },
-    { id: 3, amount: 3000, date: new Date(today.getFullYear(), today.getMonth() - 3, today.getDate()) },
-    { id: 4, amount: 6500, date: today },
+    { id: 1, amount: -100000, date: new Date(today.getFullYear() -1, today.getMonth(), today.getDate()) },
+    { id: 2, amount: 20000, date: new Date(today.getFullYear(), today.getMonth() - 6, today.getDate()) },
+    { id: 3, amount: 30000, date: new Date(today.getFullYear(), today.getMonth() - 3, today.getDate()) },
+    { id: 4, amount: 65000, date: today },
   ]);
   const [xirr, setXirr] = useState(0);
 
+  const { netProfit, totalInvestment, totalReturn, totalRoi } = useMemo(() => {
+    let investment = 0;
+    let returns = 0;
+    cashFlows.forEach(flow => {
+        if (flow.amount < 0) {
+            investment += Math.abs(flow.amount);
+        } else {
+            returns += flow.amount;
+        }
+    });
+    const profit = returns - investment;
+    const roi = investment > 0 ? (profit / investment) * 100 : 0;
+    return { netProfit: profit, totalInvestment: investment, totalReturn: returns, totalRoi: roi };
+  }, [cashFlows]);
+
   useEffect(() => {
     const result = calculateXIRR(cashFlows);
-    setXirr(result);
+    setXirr(isNaN(result) ? 0 : result);
   }, [cashFlows]);
 
   const addRow = () => {
@@ -105,8 +120,11 @@ export function XirrCalculator() {
   };
   
   const handleAmountChange = (id: number, value: string) => {
-    const amount = parseFloat(value);
-    updateRow(id, 'amount', isNaN(amount) ? 0 : amount);
+    const isNegative = value.startsWith('-');
+    const numericValue = parseFloat(value.replace(/[^0-9.]/g, ''));
+    let finalAmount = isNaN(numericValue) ? 0 : numericValue;
+    if (isNegative) finalAmount = -finalAmount;
+    updateRow(id, 'amount', finalAmount);
   }
 
   return (
@@ -116,77 +134,95 @@ export function XirrCalculator() {
             <p className="text-muted-foreground mt-2">Calculate the Extended Internal Rate of Return for irregular cash flows.</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Card className="lg:col-span-2">
-                <CardHeader>
-                    <CardTitle>Cash Flows</CardTitle>
-                    <CardDescription>Enter your series of cash flows. Use negative values for investments/outflows.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="grid grid-cols-12 gap-4 items-center font-medium px-2">
-                        <div className="col-span-6"><Label>Amount</Label></div>
-                        <div className="col-span-5"><Label>Date</Label></div>
-                    </div>
-                     {cashFlows.map((flow) => (
-                        <div key={flow.id} className="grid grid-cols-12 gap-4 items-center">
-                           <div className="col-span-6">
-                             <Input
-                                type="text"
-                                value={flow.amount}
-                                onChange={(e) => handleAmountChange(flow.id, e.target.value)}
-                                placeholder="e.g., -10000 or 500"
-                                className="text-base"
-                             />
-                           </div>
-                           <div className="col-span-5">
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                    "w-full justify-start text-left font-normal",
-                                    !flow.date && "text-muted-foreground"
-                                    )}
-                                >
-                                    {flow.date ? format(flow.date, "PPP") : <span>Pick a date</span>}
-                                </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={flow.date}
-                                    onSelect={(date) => date && updateRow(flow.id, 'date', date)}
-                                    initialFocus
-                                />
-                                </PopoverContent>
-                            </Popover>
-                           </div>
-                           <div className="col-span-1">
-                             <Button variant="ghost" size="icon" onClick={() => removeRow(flow.id)} disabled={cashFlows.length <= 2}>
-                               <Trash2 className="h-4 w-4 text-destructive" />
-                             </Button>
-                           </div>
+            <div className="lg:col-span-2 space-y-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Cash Flows</CardTitle>
+                        <CardDescription>Enter your series of cash flows. Use negative values for investments/outflows.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="grid grid-cols-12 gap-4 items-center font-medium px-2">
+                            <div className="col-span-6"><Label>Amount</Label></div>
+                            <div className="col-span-5"><Label>Date</Label></div>
                         </div>
-                    ))}
-                    <Button onClick={addRow} variant="outline" className="w-full">
-                        <PlusCircle className="mr-2 h-4 w-4" /> Add Cash Flow
-                    </Button>
-                </CardContent>
-            </Card>
-
-            <div className="lg:col-span-1 h-fit sticky top-24">
+                        {cashFlows.map((flow) => (
+                            <div key={flow.id} className="grid grid-cols-12 gap-4 items-center">
+                            <div className="col-span-6">
+                                <Input
+                                    type="text"
+                                    value={flow.amount !== 0 ? formatCurrency(flow.amount) : flow.amount < 0 ? '-' : ''}
+                                    onChange={(e) => handleAmountChange(flow.id, e.target.value)}
+                                    placeholder="e.g., -10000 or 500"
+                                    className="text-base"
+                                />
+                            </div>
+                            <div className="col-span-5">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                        "w-full justify-start text-left font-normal",
+                                        !flow.date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        {flow.date ? format(flow.date, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={flow.date}
+                                        onSelect={(date) => date && updateRow(flow.id, 'date', date)}
+                                        initialFocus
+                                    />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                            <div className="col-span-1">
+                                <Button variant="ghost" size="icon" onClick={() => removeRow(flow.id)} disabled={cashFlows.length <= 2}>
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                            </div>
+                            </div>
+                        ))}
+                        <Button onClick={addRow} variant="outline" className="w-full">
+                            <PlusCircle className="mr-2 h-4 w-4" /> Add Cash Flow
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+            
+            <div className="lg:col-span-1 space-y-6">
                 <Card>
                     <CardHeader className="text-center">
-                        <CardTitle>XIRR Result</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                        <CopyToClipboard value={xirr.toFixed(2)}>
-                            <p className="text-4xl font-bold text-primary">{formatPercentage(xirr)}</p>
+                        <CardDescription>Net Profit</CardDescription>
+                        <CopyToClipboard value={netProfit}>
+                            <p className="text-2xl font-bold">{formatCurrency(netProfit)}</p>
                         </CopyToClipboard>
-                         <p className="text-muted-foreground mt-2">Annualized Rate of Return</p>
-                    </CardContent>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader className="text-center">
+                        <CardDescription>Total ROI</CardDescription>
+                        <CopyToClipboard value={totalRoi}>
+                            <p className="text-2xl font-bold">{formatPercentage(totalRoi)}</p>
+                        </CopyToClipboard>
+                    </CardHeader>
+                </Card>
+                <Card className="bg-primary/10">
+                    <CardHeader className="text-center">
+                        <CardTitle>XIRR</CardTitle>
+                        <CopyToClipboard value={xirr.toFixed(2)}>
+                            <p className="text-3xl font-bold text-primary">{formatPercentage(xirr)}</p>
+                        </CopyToClipboard>
+                         <p className="text-muted-foreground mt-1 text-sm">Annualized Rate of Return</p>
+                    </CardHeader>
                 </Card>
             </div>
         </div>
     </div>
   );
 }
+
+    
