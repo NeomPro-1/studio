@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Key } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -36,6 +36,7 @@ type EmiCalculatorProps = {
     defaultLoanAmount?: number;
     defaultInterestRate?: number;
     defaultTenure?: number;
+    key?: Key;
 }
 
 type AmortizationData = {
@@ -208,7 +209,7 @@ export function EmiCalculator({
                         <CardHeader>
                             <CardDescription>Monthly EMI</CardDescription>
                             <CopyToClipboard value={emi}>
-                                <p className="text-xl md:text-2xl font-bold text-primary">{formatCurrency(emi)}</p>
+                                <p className="text-lg md:text-xl font-bold text-primary">{formatCurrency(emi)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -216,7 +217,7 @@ export function EmiCalculator({
                         <CardHeader>
                             <CardDescription>Principal Amount</CardDescription>
                             <CopyToClipboard value={loanAmount}>
-                                <p className="text-xl md:text-2xl font-bold">{formatCurrency(loanAmount)}</p>
+                                <p className="text-lg md:text-xl font-bold">{formatCurrency(loanAmount)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -224,7 +225,7 @@ export function EmiCalculator({
                         <CardHeader>
                             <CardDescription>Total Interest</CardDescription>
                              <CopyToClipboard value={totalInterest}>
-                                <p className="text-xl md:text-2xl font-bold">{formatCurrency(totalInterest)}</p>
+                                <p className="text-lg md:text-xl font-bold">{formatCurrency(totalInterest)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
@@ -232,7 +233,7 @@ export function EmiCalculator({
                         <CardHeader>
                             <CardDescription>Total Payment</CardDescription>
                             <CopyToClipboard value={totalPayment}>
-                                <p className="text-xl md:text-2xl font-bold">{formatCurrency(totalPayment)}</p>
+                                <p className="text-lg md:text-xl font-bold">{formatCurrency(totalPayment)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
