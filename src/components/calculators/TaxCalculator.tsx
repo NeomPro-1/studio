@@ -155,8 +155,8 @@ export function TaxCalculator() {
   };
   
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<number>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value.replace(/[^0-9]/g, '');
-      setter(value === '' ? 0 : Number(value));
+      const value = e.target.value;
+      setter(Number(value.replace(/[^0-9]/g, '')));
   };
 
   const isOldRegime = taxRegime === 'old';
