@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -20,6 +20,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     path: "/calculators/lumpsum",
     icon: Landmark,
   },
+  {
+    name: "PPF Calculator",
+    description: "Estimate the maturity value of your PPF investment.",
+    path: "/calculators/ppf",
+    icon: ShieldCheck,
+  },
    {
     name: "SWP Calculator",
     description: "Plan your systematic withdrawals from your investments.",
@@ -31,6 +37,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Calculate the return on your investment.",
     path: "/calculators/roi",
     icon: TrendingUp,
+  },
+  {
+    name: "EPF Calculator",
+    description: "Estimate your Employees' Provident Fund at retirement.",
+    path: "/calculators/epf",
+    icon: Briefcase,
   },
   {
     name: "EMI Calculator",
