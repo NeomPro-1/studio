@@ -63,6 +63,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: TrendingUp,
   },
   {
+    name: "CAGR Calculator",
+    description: "Calculate the Compound Annual Growth Rate of an investment.",
+    path: "/calculators/cagr",
+    icon: TrendingUp,
+  },
+  {
     name: "EPF Calculator",
     description: "Estimate your Employees' Provident Fund at retirement.",
     path: "/calculators/epf",
