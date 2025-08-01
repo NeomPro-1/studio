@@ -33,13 +33,31 @@ export function LoanCalculators() {
                                     </TabsList>
                                     <div className="md:col-span-3">
                                         <TabsContent value="home-loan">
-                                            <EmiCalculator key="home-loan" title="Home Loan EMI Calculator"/>
+                                            <EmiCalculator 
+                                                key="home-loan" 
+                                                title="Home Loan EMI Calculator"
+                                                defaultLoanAmount={3000000}
+                                                defaultInterestRate={8.5}
+                                                defaultTenure={20}
+                                            />
                                         </TabsContent>
                                         <TabsContent value="personal-loan">
-                                            <EmiCalculator key="personal-loan" title="Personal Loan EMI Calculator"/>
+                                            <EmiCalculator 
+                                                key="personal-loan" 
+                                                title="Personal Loan EMI Calculator"
+                                                defaultLoanAmount={500000}
+                                                defaultInterestRate={11}
+                                                defaultTenure={5}
+                                            />
                                         </TabsContent>
                                         <TabsContent value="car-loan">
-                                             <EmiCalculator key="car-loan" title="Car Loan EMI Calculator"/>
+                                             <EmiCalculator 
+                                                key="car-loan" 
+                                                title="Car Loan EMI Calculator"
+                                                defaultLoanAmount={800000}
+                                                defaultInterestRate={9.5}
+                                                defaultTenure={7}
+                                             />
                                         </TabsContent>
                                     </div>
                                 </div>
@@ -66,16 +84,40 @@ export function LoanCalculators() {
                                     </TabsList>
                                     <div className="md:col-span-3">
                                         <TabsContent value="sbi">
-                                            <EmiCalculator key="sbi-loan" title="SBI Loan EMI Calculator"/>
+                                            <EmiCalculator 
+                                                key="sbi-loan" 
+                                                title="SBI Loan EMI Calculator"
+                                                defaultLoanAmount={2500000}
+                                                defaultInterestRate={8.75}
+                                                defaultTenure={20}
+                                            />
                                         </TabsContent>
                                         <TabsContent value="hdfc">
-                                            <EmiCalculator key="hdfc-loan" title="HDFC Loan EMI Calculator"/>
+                                            <EmiCalculator 
+                                                key="hdfc-loan" 
+                                                title="HDFC Loan EMI Calculator"
+                                                defaultLoanAmount={2800000}
+                                                defaultInterestRate={8.9}
+                                                defaultTenure={20}
+                                            />
                                         </TabsContent>
                                         <TabsContent value="axis">
-                                             <EmiCalculator key="axis-loan" title="Axis Bank Loan EMI Calculator"/>
+                                             <EmiCalculator 
+                                                key="axis-loan" 
+                                                title="Axis Bank Loan EMI Calculator"
+                                                defaultLoanAmount={2200000}
+                                                defaultInterestRate={9.1}
+                                                defaultTenure={15}
+                                             />
                                         </TabsContent>
                                         <TabsContent value="icici">
-                                             <EmiCalculator key="icici-loan" title="ICICI Loan EMI Calculator"/>
+                                             <EmiCalculator 
+                                                key="icici-loan" 
+                                                title="ICICI Loan EMI Calculator"
+                                                defaultLoanAmount={3000000}
+                                                defaultInterestRate={9.0}
+                                                defaultTenure={20}
+                                             />
                                         </TabsContent>
                                     </div>
                                 </div>

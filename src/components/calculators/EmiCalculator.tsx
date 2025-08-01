@@ -33,6 +33,9 @@ const chartConfig = {
 
 type EmiCalculatorProps = {
     title?: string;
+    defaultLoanAmount?: number;
+    defaultInterestRate?: number;
+    defaultTenure?: number;
 }
 
 type AmortizationData = {
@@ -43,10 +46,15 @@ type AmortizationData = {
     endingBalance: number;
 };
 
-export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) {
-  const [loanAmount, setLoanAmount] = useState(1000000);
-  const [interestRate, setInterestRate] = useState(8.5);
-  const [tenure, setTenure] = useState(20);
+export function EmiCalculator({ 
+    title = "EMI Calculator",
+    defaultLoanAmount = 1000000,
+    defaultInterestRate = 8.5,
+    defaultTenure = 20
+}: EmiCalculatorProps) {
+  const [loanAmount, setLoanAmount] = useState(defaultLoanAmount);
+  const [interestRate, setInterestRate] = useState(defaultInterestRate);
+  const [tenure, setTenure] = useState(defaultTenure);
 
   const [emi, setEmi] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
