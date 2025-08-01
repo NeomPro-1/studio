@@ -187,7 +187,7 @@ export function PpfCalculator() {
                                     <ChartTooltip
                                         cursor={false}
                                         content={<ChartTooltipContent
-                                            formatter={(value, name) => [formatCurrency(value as number), name]}
+                                            formatter={(value, name) => [formatCurrency(value as number), chartConfig[name as keyof typeof chartConfig]?.label]}
                                         />}
                                     />
                                     <ChartLegend content={<ChartLegendContent />} />
