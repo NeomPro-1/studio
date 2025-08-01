@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -73,6 +73,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Estimate your Employees' Provident Fund at retirement.",
     path: "/calculators/epf",
     icon: Briefcase,
+  },
+  {
+    name: "Gratuity Calculator",
+    description: "Estimate the gratuity amount you will receive from your employer.",
+    path: "/calculators/gratuity",
+    icon: Award,
   },
   {
     name: "EMI Calculator",
