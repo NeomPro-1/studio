@@ -109,7 +109,11 @@ export function PpfCalculator() {
                             value={interestRate}
                             onChange={(e) => {
                                 const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
-                                if (!isNaN(value)) setInterestRate(value);
+                                if (!isNaN(value)) {
+                                    setInterestRate(value);
+                                } else {
+                                    setInterestRate(0);
+                                }
                             }}
                             className="text-lg font-semibold"
                         />
