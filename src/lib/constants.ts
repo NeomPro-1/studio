@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -25,6 +25,18 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Calculate the maturity value of your Fixed Deposit.",
     path: "/calculators/fd",
     icon: PiggyBank,
+  },
+   {
+    name: "Simple Interest Calculator",
+    description: "Calculate simple interest on a principal amount.",
+    path: "/calculators/simple-interest",
+    icon: LineChart,
+  },
+  {
+    name: "Compound Interest Calculator",
+    description: "Calculate interest on interest. It's powerful!",
+    path: "/calculators/compound-interest",
+    icon: BarChartHorizontal,
   },
   {
     name: "PPF Calculator",
