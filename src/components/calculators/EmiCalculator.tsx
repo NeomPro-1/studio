@@ -208,33 +208,25 @@ export function EmiCalculator({
                     <Card>
                         <CardHeader>
                             <CardDescription>Monthly EMI</CardDescription>
-                            <CopyToClipboard value={emi}>
-                                <p className="text-lg md:text-xl font-bold text-primary">{formatCurrency(emi)}</p>
-                            </CopyToClipboard>
+                            <p className="text-lg md:text-xl font-bold text-primary">{formatCurrency(emi)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Principal Amount</CardDescription>
-                            <CopyToClipboard value={loanAmount}>
-                                <p className="text-lg md:text-xl font-bold">{formatCurrency(loanAmount)}</p>
-                            </CopyToClipboard>
+                            <p className="text-lg md:text-xl font-bold">{formatCurrency(loanAmount)}</p>
                         </CardHeader>
                     </Card>
                      <Card>
                         <CardHeader>
                             <CardDescription>Total Interest</CardDescription>
-                             <CopyToClipboard value={totalInterest}>
-                                <p className="text-lg md:text-xl font-bold">{formatCurrency(totalInterest)}</p>
-                            </CopyToClipboard>
+                            <p className="text-lg md:text-xl font-bold">{formatCurrency(totalInterest)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Total Payment</CardDescription>
-                            <CopyToClipboard value={totalPayment}>
-                                <p className="text-lg md:text-xl font-bold">{formatCurrency(totalPayment)}</p>
-                            </CopyToClipboard>
+                            <p className="text-lg md:text-xl font-bold">{formatCurrency(totalPayment)}</p>
                         </CardHeader>
                     </Card>
                 </div>
