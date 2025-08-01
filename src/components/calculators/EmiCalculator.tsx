@@ -207,25 +207,25 @@ export function EmiCalculator({
                     <Card>
                         <CardHeader className="text-center">
                             <CardDescription>Monthly EMI</CardDescription>
-                            <p className="text-lg md:text-xl font-bold text-primary">{formatCurrency(emi)}</p>
+                            <p className="text-lg font-bold text-primary">{formatCurrency(emi)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader className="text-center">
                             <CardDescription>Principal Amount</CardDescription>
-                            <p className="text-lg md:text-xl font-bold">{formatCurrency(loanAmount)}</p>
+                            <p className="text-lg font-bold">{formatCurrency(loanAmount)}</p>
                         </CardHeader>
                     </Card>
                      <Card>
                         <CardHeader className="text-center">
                             <CardDescription>Total Interest</CardDescription>
-                            <p className="text-lg md:text-xl font-bold">{formatCurrency(totalInterest)}</p>
+                            <p className="text-lg font-bold">{formatCurrency(totalInterest)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader className="text-center">
                             <CardDescription>Total Payment</CardDescription>
-                            <p className="text-lg md:text-xl font-bold">{formatCurrency(totalPayment)}</p>
+                            <p className="text-lg font-bold">{formatCurrency(totalPayment)}</p>
                         </CardHeader>
                     </Card>
                 </div>
