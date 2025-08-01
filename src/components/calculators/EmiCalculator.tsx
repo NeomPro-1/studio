@@ -141,12 +141,20 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
             </Card>
 
             <div className="lg:col-span-2 space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
                     <Card>
                         <CardHeader>
                             <CardDescription>Monthly EMI</CardDescription>
                             <CopyToClipboard value={emi}>
                                 <p className="text-2xl font-bold text-primary">{formatCurrency(emi)}</p>
+                            </CopyToClipboard>
+                        </CardHeader>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardDescription>Principal Amount</CardDescription>
+                            <CopyToClipboard value={loanAmount}>
+                                <p className="text-2xl font-bold">{formatCurrency(loanAmount)}</p>
                             </CopyToClipboard>
                         </CardHeader>
                     </Card>
