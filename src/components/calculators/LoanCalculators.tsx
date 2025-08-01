@@ -32,13 +32,13 @@ export function LoanCalculators() {
                                     </TabsList>
                                     <div className="md:col-span-3">
                                         <TabsContent value="home-loan">
-                                            <EmiCalculator title="Home Loan EMI Calculator"/>
+                                            <EmiCalculator key="home-loan" title="Home Loan EMI Calculator"/>
                                         </TabsContent>
                                         <TabsContent value="personal-loan">
-                                            <EmiCalculator title="Personal Loan EMI Calculator"/>
+                                            <EmiCalculator key="personal-loan" title="Personal Loan EMI Calculator"/>
                                         </TabsContent>
                                         <TabsContent value="car-loan">
-                                             <EmiCalculator title="Car Loan EMI Calculator"/>
+                                             <EmiCalculator key="car-loan" title="Car Loan EMI Calculator"/>
                                         </TabsContent>
                                     </div>
                                 </div>
@@ -65,16 +65,16 @@ export function LoanCalculators() {
                                     </TabsList>
                                     <div className="md:col-span-3">
                                         <TabsContent value="sbi">
-                                            <EmiCalculator title="SBI Loan EMI Calculator"/>
+                                            <EmiCalculator key="sbi-loan" title="SBI Loan EMI Calculator"/>
                                         </TabsContent>
                                         <TabsContent value="hdfc">
-                                            <EmiCalculator title="HDFC Loan EMI Calculator"/>
+                                            <EmiCalculator key="hdfc-loan" title="HDFC Loan EMI Calculator"/>
                                         </TabsContent>
                                         <TabsContent value="axis">
-                                             <EmiCalculator title="Axis Bank Loan EMI Calculator"/>
+                                             <EmiCalculator key="axis-loan" title="Axis Bank Loan EMI Calculator"/>
                                         </TabsContent>
                                         <TabsContent value="icici">
-                                             <EmiCalculator title="ICICI Loan EMI Calculator"/>
+                                             <EmiCalculator key="icici-loan" title="ICICI Loan EMI Calculator"/>
                                         </TabsContent>
                                     </div>
                                 </div>
