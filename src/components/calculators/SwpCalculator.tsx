@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { formatCurrency, formatLakhs } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import {
   ChartContainer,
   ChartTooltip,
@@ -197,25 +196,19 @@ export function SwpCalculator() {
                     <Card>
                         <CardHeader>
                             <CardDescription>Your money will last for</CardDescription>
-                            <CopyToClipboard value={formatYearsMonths(monthsLasts)}>
-                                <p className="text-2xl font-bold text-primary">{formatYearsMonths(monthsLasts)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold text-primary">{formatYearsMonths(monthsLasts)}</p>
                         </CardHeader>
                     </Card>
                      <Card>
                         <CardHeader>
                             <CardDescription>Total Withdrawn</CardDescription>
-                             <CopyToClipboard value={totalWithdrawn}>
-                                <p className="text-2xl font-bold">{totalWithdrawn === Infinity ? "Infinity" : formatCurrency(totalWithdrawn)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{totalWithdrawn === Infinity ? "Infinity" : formatCurrency(totalWithdrawn)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Total Interest Earned</CardDescription>
-                            <CopyToClipboard value={totalInterest}>
-                                <p className="text-2xl font-bold">{totalInterest === Infinity ? "Infinity" : formatCurrency(totalInterest)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{totalInterest === Infinity ? "Infinity" : formatCurrency(totalInterest)}</p>
                         </CardHeader>
                     </Card>
                 </div>

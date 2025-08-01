@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { formatCurrency, formatLakhs } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import {
   ChartContainer,
   ChartTooltip,
@@ -165,25 +164,19 @@ export function FdCalculator() {
                     <Card>
                         <CardHeader>
                             <CardDescription>Invested Amount</CardDescription>
-                            <CopyToClipboard value={principal}>
-                                <p className="text-2xl font-bold">{formatCurrency(principal)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(principal)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Est. Returns</CardDescription>
-                             <CopyToClipboard value={estReturns}>
-                                <p className="text-2xl font-bold">{formatCurrency(estReturns)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(estReturns)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Maturity Value</CardDescription>
-                            <CopyToClipboard value={totalValue}>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(totalValue)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold text-primary">{formatCurrency(totalValue)}</p>
                         </CardHeader>
                     </Card>
                 </div>

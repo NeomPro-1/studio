@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { formatCurrency, formatPercentage } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { Slider } from '@/components/ui/slider';
 
 export function RoiCalculator() {
@@ -112,25 +111,19 @@ export function RoiCalculator() {
                     <Card>
                         <CardHeader>
                             <CardDescription>Net Profit</CardDescription>
-                            <CopyToClipboard value={netProfit}>
-                                <p className="text-2xl font-bold">{formatCurrency(netProfit)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(netProfit)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Total ROI</CardDescription>
-                             <CopyToClipboard value={roi}>
-                                <p className="text-2xl font-bold">{formatPercentage(roi)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatPercentage(roi)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Annualized ROI</CardDescription>
-                             <CopyToClipboard value={annualizedRoi}>
-                                <p className="text-2xl font-bold text-primary">{formatPercentage(annualizedRoi)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold text-primary">{formatPercentage(annualizedRoi)}</p>
                         </CardHeader>
                     </Card>
                 </div>

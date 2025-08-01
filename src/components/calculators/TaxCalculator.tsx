@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { formatCurrency, formatPercentage } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -286,9 +285,7 @@ export function TaxCalculator() {
                             </Card>
                              <Card className="p-6 bg-primary/10">
                                 <CardDescription>Total Tax Payable</CardDescription>
-                                 <CopyToClipboard value={taxPayable}>
-                                    <p className="text-3xl font-bold text-primary">{formatCurrency(taxPayable)}</p>
-                                 </CopyToClipboard>
+                                <p className="text-3xl font-bold text-primary">{formatCurrency(taxPayable)}</p>
                             </Card>
                         </>
                     ) : (
@@ -300,5 +297,3 @@ export function TaxCalculator() {
     </div>
   );
 }
-
-    

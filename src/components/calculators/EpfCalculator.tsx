@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { formatCurrency, formatLakhs } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import {
   ChartContainer,
   ChartTooltip,
@@ -161,25 +160,19 @@ export function EpfCalculator() {
                     <Card>
                         <CardHeader>
                             <CardDescription>Total Contribution</CardDescription>
-                            <CopyToClipboard value={totalContribution}>
-                                <p className="text-2xl font-bold">{formatCurrency(totalContribution + currentEpfBalance)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(totalContribution + currentEpfBalance)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Total Interest</CardDescription>
-                             <CopyToClipboard value={totalInterest}>
-                                <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(totalInterest)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Retirement Corpus</CardDescription>
-                            <CopyToClipboard value={maturityValue}>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(maturityValue)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold text-primary">{formatCurrency(maturityValue)}</p>
                         </CardHeader>
                     </Card>
                 </div>

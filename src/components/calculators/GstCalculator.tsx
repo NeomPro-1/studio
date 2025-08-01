@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { formatCurrency } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -119,25 +118,19 @@ export function GstCalculator() {
                     <Card>
                         <CardHeader>
                             <CardDescription>{gstType === 'inclusive' ? 'Pre-GST Amount' : 'Net Amount'}</CardDescription>
-                            <CopyToClipboard value={netAmount}>
-                                <p className="text-2xl font-bold">{formatCurrency(netAmount)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(netAmount)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>GST Amount</CardDescription>
-                             <CopyToClipboard value={gstAmount}>
-                                <p className="text-2xl font-bold">{formatCurrency(gstAmount)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold">{formatCurrency(gstAmount)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
                         <CardHeader>
                             <CardDescription>Total Amount</CardDescription>
-                            <CopyToClipboard value={totalAmount}>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(totalAmount)}</p>
-                            </CopyToClipboard>
+                            <p className="text-2xl font-bold text-primary">{formatCurrency(totalAmount)}</p>
                         </CardHeader>
                     </Card>
                 </div>

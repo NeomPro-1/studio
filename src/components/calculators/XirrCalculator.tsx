@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { formatCurrency, formatPercentage } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -197,25 +196,19 @@ export function XirrCalculator() {
                 <Card>
                     <CardHeader className="text-center">
                         <CardDescription>Net Profit</CardDescription>
-                        <CopyToClipboard value={netProfit}>
-                            <p className="text-2xl font-bold">{formatCurrency(netProfit)}</p>
-                        </CopyToClipboard>
+                        <p className="text-2xl font-bold">{formatCurrency(netProfit)}</p>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader className="text-center">
                         <CardDescription>Total ROI</CardDescription>
-                        <CopyToClipboard value={totalRoi}>
-                            <p className="text-2xl font-bold">{formatPercentage(totalRoi)}</p>
-                        </CopyToClipboard>
+                        <p className="text-2xl font-bold">{formatPercentage(totalRoi)}</p>
                     </CardHeader>
                 </Card>
                 <Card className="bg-primary/10">
                     <CardHeader className="text-center">
                         <CardTitle>XIRR</CardTitle>
-                        <CopyToClipboard value={xirr.toFixed(2)}>
-                            <p className="text-3xl font-bold text-primary">{formatPercentage(xirr)}</p>
-                        </CopyToClipboard>
+                        <p className="text-3xl font-bold text-primary">{formatPercentage(xirr)}</p>
                          <p className="text-muted-foreground mt-1 text-sm">Annualized Rate of Return</p>
                     </CardHeader>
                 </Card>
@@ -224,5 +217,3 @@ export function XirrCalculator() {
     </div>
   );
 }
-
-    
