@@ -135,7 +135,8 @@ export function XirrCalculator() {
 
   const displayAmount = (amount: number) => {
     if (amount === 0) return '';
-    return formatCurrency(amount);
+    const formatted = formatCurrency(Math.abs(amount));
+    return amount < 0 ? `-${formatted}` : formatted;
   };
 
   return (
