@@ -45,6 +45,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: TrendingUp,
   },
   {
+    name: "XIRR Calculator",
+    description: "Calculate return on investments with irregular cash flows.",
+    path: "/calculators/xirr",
+    icon: TrendingUp,
+  },
+  {
     name: "EPF Calculator",
     description: "Estimate your Employees' Provident Fund at retirement.",
     path: "/calculators/epf",
