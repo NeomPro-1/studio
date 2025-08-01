@@ -57,9 +57,9 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: Wallet,
   },
   {
-    name: "Annuity Calculator",
-    description: "Calculate the regular payout from a lump-sum investment.",
-    path: "/calculators/annuity",
+    name: "Pension Calculator",
+    description: "Calculate the monthly pension from a lump-sum investment.",
+    path: "/calculators/pension",
     icon: WalletCards,
   },
   {
