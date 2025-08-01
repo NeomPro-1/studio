@@ -119,9 +119,9 @@ export function XirrCalculator() {
   };
   
   const handleAmountChange = (id: number, value: string) => {
-    let newAmount = 0;
     const isNegative = value.startsWith('-');
     const numericString = value.replace(/[^0-9]/g, '');
+    let newAmount = 0;
     
     if (numericString) {
       newAmount = parseInt(numericString, 10);
@@ -135,8 +135,11 @@ export function XirrCalculator() {
 
   const displayAmount = (amount: number) => {
     if (amount === 0) return '';
-    const formatted = formatCurrency(Math.abs(amount));
-    return amount < 0 ? `-${formatted}` : formatted;
+    const formatted = new Intl.NumberFormat('en-IN', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(Math.abs(amount));
+    return amount < 0 ? `-₹${formatted}` : `₹${formatted}`;
   };
 
   return (
@@ -164,7 +167,7 @@ export function XirrCalculator() {
                                     type="text"
                                     value={displayAmount(flow.amount)}
                                     onChange={(e) => handleAmountChange(flow.id, e.target.value)}
-                                    placeholder="e.g., -100,000 or 500"
+                                    placeholder="e.g., -₹100,000 or ₹500"
                                     className="text-base"
                                 />
                             </div>

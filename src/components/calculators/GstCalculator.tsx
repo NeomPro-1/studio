@@ -49,6 +49,11 @@ export function GstCalculator() {
     setGstRate(value);
   }
 
+  const displayFormattedCurrency = (value: number) => {
+    if (value === 0) return '';
+    return value.toLocaleString('en-IN');
+  }
+
   return (
     <div className="space-y-8">
         <div className="text-center">
@@ -66,7 +71,7 @@ export function GstCalculator() {
                         <Input
                             id="amount"
                             type="text"
-                            value={formatCurrency(amount)}
+                            value={displayFormattedCurrency(amount)}
                             onChange={handleAmountChange}
                             className="text-lg font-semibold"
                         />
