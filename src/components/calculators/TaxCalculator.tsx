@@ -211,7 +211,7 @@ export function TaxCalculator() {
                     </CardContent>
                 </Card>
 
-                <Accordion type="single" collapsible className="w-full" defaultValue="income-details">
+                <Accordion type="multiple" className="w-full" defaultValue={['income-details']}>
                     <AccordionItem value="income-details">
                         <AccordionTrigger className="text-lg font-semibold">Income Details</AccordionTrigger>
                         <AccordionContent>
