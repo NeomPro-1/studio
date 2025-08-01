@@ -282,54 +282,88 @@ export function EmiCalculator({
                     </TabsList>
                     <TabsContent value="yearly">
                         <ScrollArea className="h-96">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[100px]">Year</TableHead>
-                                        <TableHead>Principal Paid</TableHead>
-                                        <TableHead>Interest Paid</TableHead>
-                                        <TableHead>Total Payment</TableHead>
-                                        <TableHead className="text-right">Ending Balance</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {yearlyAmortizationData.map((row) => (
-                                        <TableRow key={row.year}>
-                                            <TableCell className="font-medium">{row.year}</TableCell>
-                                            <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
-                                            <TableCell>{formatCurrency(row.interestPaid)}</TableCell>
-                                            <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
-                                            <TableCell className="text-right">{formatCurrency(row.endingBalance)}</TableCell>
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Year</TableHead>
+                                            <TableHead>Principal Paid</TableHead>
+                                            <TableHead>Interest Paid</TableHead>
+                                            <TableHead>Total Payment</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {yearlyAmortizationData.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell className="font-medium">{row.year}</TableCell>
+                                                <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
+                                                <TableCell>{formatCurrency(row.interestPaid)}</TableCell>
+                                                <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+                                                <TableCell className="text-right">{formatCurrency(row.endingBalance)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="block md:hidden space-y-4 p-2">
+                                {yearlyAmortizationData.map((row) => (
+                                    <Card key={row.year}>
+                                        <CardHeader>
+                                            <CardTitle>Year {row.year}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Principal Paid:</span> <span className="font-medium">{formatCurrency(row.principalPaid)}</span></div>
+                                            <div className="flex justify-between"><span>Interest Paid:</span> <span className="font-medium">{formatCurrency(row.interestPaid)}</span></div>
+                                            <div className="flex justify-between"><span>Total Payment:</span> <span className="font-medium">{formatCurrency(row.totalPayment)}</span></div>
+                                            <div className="flex justify-between font-bold text-base"><span>Ending Balance:</span> <span className="font-bold">{formatCurrency(row.endingBalance)}</span></div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
                         </ScrollArea>
                     </TabsContent>
                     <TabsContent value="monthly">
                          <ScrollArea className="h-96">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[100px]">Month</TableHead>
-                                        <TableHead>Principal Paid</TableHead>
-                                        <TableHead>Interest Paid</TableHead>
-                                        <TableHead>Total Payment</TableHead>
-                                        <TableHead className="text-right">Ending Balance</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {amortizationData.map((row) => (
-                                        <TableRow key={row.month}>
-                                            <TableCell className="font-medium">{row.month}</TableCell>
-                                            <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
-                                            <TableCell>{formatCurrency(row.interestPaid)}</TableCell>
-                                            <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
-                                            <TableCell className="text-right">{formatCurrency(row.endingBalance)}</TableCell>
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Month</TableHead>
+                                            <TableHead>Principal Paid</TableHead>
+                                            <TableHead>Interest Paid</TableHead>
+                                            <TableHead>Total Payment</TableHead>
+                                            <TableHead className="text-right">Ending Balance</TableHead>
                                         </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {amortizationData.map((row) => (
+                                            <TableRow key={row.month}>
+                                                <TableCell className="font-medium">{row.month}</TableCell>
+                                                <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
+                                                <TableCell>{formatCurrency(row.interestPaid)}</TableCell>
+                                                <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+                                                <TableCell className="text-right">{formatCurrency(row.endingBalance)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="block md:hidden space-y-4 p-2">
+                                {amortizationData.map((row) => (
+                                    <Card key={row.month}>
+                                        <CardHeader>
+                                            <CardTitle>Month {row.month}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Principal Paid:</span> <span className="font-medium">{formatCurrency(row.principalPaid)}</span></div>
+                                            <div className="flex justify-between"><span>Interest Paid:</span> <span className="font-medium">{formatCurrency(row.interestPaid)}</span></div>
+                                            <div className="flex justify-between"><span>Total Payment:</span> <span className="font-medium">{formatCurrency(row.totalPayment)}</span></div>
+                                            <div className="flex justify-between font-bold text-base"><span>Ending Balance:</span> <span className="font-bold">{formatCurrency(row.endingBalance)}</span></div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
                         </ScrollArea>
                     </TabsContent>
                 </Tabs>
