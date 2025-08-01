@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { formatCurrency } from '@/lib/formatters';
-import { CopyToClipboard } from '@/components/CopyToClipboard';
 import {
   ChartContainer,
   ChartTooltip,
@@ -204,27 +203,27 @@ export function EmiCalculator({
             </Card>
 
             <div className="lg:col-span-2 space-y-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="text-center">
                             <CardDescription>Monthly EMI</CardDescription>
                             <p className="text-lg md:text-xl font-bold text-primary">{formatCurrency(emi)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="text-center">
                             <CardDescription>Principal Amount</CardDescription>
                             <p className="text-lg md:text-xl font-bold">{formatCurrency(loanAmount)}</p>
                         </CardHeader>
                     </Card>
                      <Card>
-                        <CardHeader>
+                        <CardHeader className="text-center">
                             <CardDescription>Total Interest</CardDescription>
                             <p className="text-lg md:text-xl font-bold">{formatCurrency(totalInterest)}</p>
                         </CardHeader>
                     </Card>
                     <Card>
-                        <CardHeader>
+                        <CardHeader className="text-center">
                             <CardDescription>Total Payment</CardDescription>
                             <p className="text-lg md:text-xl font-bold">{formatCurrency(totalPayment)}</p>
                         </CardHeader>
