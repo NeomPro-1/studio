@@ -15,6 +15,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: PieChart,
   },
   {
+    name: "Step-up SIP Calculator",
+    description: "Calculate SIP returns with an annual investment increase.",
+    path: "/calculators/step-up-sip",
+    icon: TrendingUp,
+  },
+  {
     name: "Lumpsum Calculator",
     description: "Calculate the future value of a one-time investment.",
     path: "/calculators/lumpsum",
