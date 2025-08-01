@@ -131,12 +131,26 @@ export function EpfCalculator() {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="salary-increase">Annual Salary Increase (%)</Label>
-                        <Input id="salary-increase" type="text" value={annualSalaryIncrease} onChange={(e) => setAnnualSalaryIncrease(parseFloat(e.target.value.replace(/[^0-9.]/g, '')))} className="text-lg font-semibold" />
+                        <Input id="salary-increase" type="text" value={annualSalaryIncrease} onChange={(e) => {
+                            const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
+                            if (!isNaN(value)) {
+                                setAnnualSalaryIncrease(value);
+                            } else {
+                                setAnnualSalaryIncrease(0);
+                            }
+                        }} className="text-lg font-semibold" />
                         <Slider value={[annualSalaryIncrease]} onValueChange={(vals) => setAnnualSalaryIncrease(vals[0])} min={0} max={20} step={0.5} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="interest-rate">EPF Interest Rate (%)</Label>
-                        <Input id="interest-rate" type="text" value={interestRate} onChange={(e) => setInterestRate(parseFloat(e.target.value.replace(/[^0-9.]/g, '')))} className="text-lg font-semibold" />
+                        <Input id="interest-rate" type="text" value={interestRate} onChange={(e) => {
+                            const value = parseFloat(e.target.value.replace(/[^0-9.]/g, ''));
+                            if (!isNaN(value)) {
+                                setInterestRate(value);
+                            } else {
+                                setInterestRate(0);
+                            }
+                        }} className="text-lg font-semibold" />
                         <Slider value={[interestRate]} onValueChange={(vals) => setInterestRate(vals[0])} min={6} max={10} step={0.05} />
                     </div>
                 </CardContent>
