@@ -53,14 +53,6 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
   const [totalPayment, setTotalPayment] = useState(0);
   const [amortizationData, setAmortizationData] = useState<AmortizationData[]>([]);
 
-  // This useEffect hook will reset the state when the title prop changes.
-  // This is the key to making each calculator independent.
-  useEffect(() => {
-    setLoanAmount(1000000);
-    setInterestRate(8.5);
-    setTenure(20);
-  }, [title]);
-
   const chartData = [
     { name: 'principal', value: loanAmount, fill: 'var(--color-principal)' },
     { name: 'interest', value: totalInterest, fill: 'var(--color-interest)'  },
