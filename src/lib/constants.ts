@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -55,6 +55,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Plan your systematic withdrawals from your investments.",
     path: "/calculators/swp",
     icon: Wallet,
+  },
+  {
+    name: "Annuity Calculator",
+    description: "Calculate the regular payout from a lump-sum investment.",
+    path: "/calculators/annuity",
+    icon: WalletCards,
   },
   {
     name: "ROI Calculator",
