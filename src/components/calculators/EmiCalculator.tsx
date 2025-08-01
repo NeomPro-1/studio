@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,9 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const chartConfig = {
     principal: {
@@ -32,6 +35,14 @@ type EmiCalculatorProps = {
     title?: string;
 }
 
+type AmortizationData = {
+    month: number;
+    principalPaid: number;
+    interestPaid: number;
+    totalPayment: number;
+    endingBalance: number;
+};
+
 export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) {
   const [loanAmount, setLoanAmount] = useState(1000000);
   const [interestRate, setInterestRate] = useState(8.5);
@@ -40,11 +51,33 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
   const [emi, setEmi] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
   const [totalPayment, setTotalPayment] = useState(0);
+  const [amortizationData, setAmortizationData] = useState<AmortizationData[]>([]);
 
   const chartData = [
     { name: 'principal', value: loanAmount, fill: 'var(--color-principal)' },
     { name: 'interest', value: totalInterest, fill: 'var(--color-interest)'  },
   ];
+  
+  const yearlyAmortizationData = useMemo(() => {
+    if (amortizationData.length === 0) return [];
+    
+    const yearlyData = [];
+    let currentYearData = { year: 1, principalPaid: 0, interestPaid: 0, totalPayment: 0, endingBalance: 0 };
+    
+    for(let i = 0; i < amortizationData.length; i++) {
+        const monthData = amortizationData[i];
+        currentYearData.principalPaid += monthData.principalPaid;
+        currentYearData.interestPaid += monthData.interestPaid;
+        currentYearData.totalPayment += monthData.totalPayment;
+        
+        if ((i + 1) % 12 === 0 || (i + 1) === amortizationData.length) {
+            currentYearData.endingBalance = monthData.endingBalance;
+            yearlyData.push(currentYearData);
+            currentYearData = { year: yearlyData.length + 1, principalPaid: 0, interestPaid: 0, totalPayment: 0, endingBalance: 0 };
+        }
+    }
+    return yearlyData;
+  }, [amortizationData]);
 
   useEffect(() => {
     const principal = loanAmount;
@@ -59,10 +92,29 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
       setEmi(emiCalc);
       setTotalPayment(totalPaymentCalc);
       setTotalInterest(totalInterestCalc);
+      
+      const schedule: AmortizationData[] = [];
+      let balance = principal;
+      for (let i = 1; i <= n; i++) {
+          const interestPaid = balance * rate;
+          const principalPaid = emiCalc - interestPaid;
+          balance -= principalPaid;
+
+          schedule.push({
+              month: i,
+              principalPaid,
+              interestPaid,
+              totalPayment: emiCalc,
+              endingBalance: balance > 0 ? balance : 0,
+          });
+      }
+      setAmortizationData(schedule);
+
     } else {
       setEmi(0);
       setTotalPayment(0);
       setTotalInterest(0);
+      setAmortizationData([]);
     }
   }, [loanAmount, interestRate, tenure]);
 
@@ -210,6 +262,71 @@ export function EmiCalculator({ title = "EMI Calculator" }: EmiCalculatorProps) 
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Amortization Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Tabs defaultValue="yearly">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="yearly">Yearly</TabsTrigger>
+                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="yearly">
+                        <ScrollArea className="h-96">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[100px]">Year</TableHead>
+                                        <TableHead>Principal Paid</TableHead>
+                                        <TableHead>Interest Paid</TableHead>
+                                        <TableHead>Total Payment</TableHead>
+                                        <TableHead className="text-right">Ending Balance</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {yearlyAmortizationData.map((row) => (
+                                        <TableRow key={row.year}>
+                                            <TableCell className="font-medium">{row.year}</TableCell>
+                                            <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
+                                            <TableCell>{formatCurrency(row.interestPaid)}</TableCell>
+                                            <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(row.endingBalance)}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </ScrollArea>
+                    </TabsContent>
+                    <TabsContent value="monthly">
+                         <ScrollArea className="h-96">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[100px]">Month</TableHead>
+                                        <TableHead>Principal Paid</TableHead>
+                                        <TableHead>Interest Paid</TableHead>
+                                        <TableHead>Total Payment</TableHead>
+                                        <TableHead className="text-right">Ending Balance</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {amortizationData.map((row) => (
+                                        <TableRow key={row.month}>
+                                            <TableCell className="font-medium">{row.month}</TableCell>
+                                            <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
+                                            <TableCell>{formatCurrency(row.interestPaid)}</TableCell>
+                                            <TableCell>{formatCurrency(row.totalPayment)}</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(row.endingBalance)}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </ScrollArea>
+                    </TabsContent>
+                </Tabs>
+            </CardContent>
+        </Card>
     </div>
   );
 }
