@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, TrendingDown, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -33,6 +33,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: Target,
   },
   {
+    name: "Pension Calculator",
+    description: "Calculate the monthly pension from a lump-sum investment.",
+    path: "/calculators/pension",
+    icon: WalletCards,
+  },
+  {
     name: "FD Calculator",
     description: "Calculate the maturity value of your Fixed Deposit.",
     path: "/calculators/fd",
@@ -61,12 +67,6 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Plan your systematic withdrawals from your investments.",
     path: "/calculators/swp",
     icon: Wallet,
-  },
-  {
-    name: "Pension Calculator",
-    description: "Calculate the monthly pension from a lump-sum investment.",
-    path: "/calculators/pension",
-    icon: WalletCards,
   },
   {
     name: "ROI Calculator",
@@ -133,6 +133,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Calculate Goods and Services Tax (GST) for any amount.",
     path: "/calculators/gst",
     icon: ReceiptText,
+  },
+  {
+    name: "Inflation Calculator",
+    description: "See how inflation erodes the value of your money over time.",
+    path: "/calculators/inflation",
+    icon: TrendingDown,
   },
 ];
 
