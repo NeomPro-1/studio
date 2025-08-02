@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, TrendingDown, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, TrendingDown, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target, Building } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -129,16 +129,16 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: ReceiptText,
   },
   {
-    name: "Income Tax Calculator",
-    description: "Estimate your income tax for the financial year.",
-    path: "/calculators/tax",
-    icon: FileText,
-  },
-  {
     name: "Inflation Calculator",
     description: "See how inflation erodes the value of your money over time.",
     path: "/calculators/inflation",
     icon: TrendingDown,
+  },
+  {
+    name: "Real Estate vs. MF Comparator",
+    description: "Compare returns from property vs. mutual funds.",
+    path: "/calculators/real-estate-vs-mf",
+    icon: Building,
   },
 ];
 
