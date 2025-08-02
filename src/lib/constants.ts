@@ -111,12 +111,6 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: Home,
   },
   {
-    name: "Loan Prepayment",
-    description: "See how much you can save by prepaying your loan.",
-    path: "/calculators/loan",
-    icon: FastForward
-  },
-  {
     name: "Income Tax Calculator",
     description: "Estimate your income tax for the financial year.",
     path: "/calculators/tax",
