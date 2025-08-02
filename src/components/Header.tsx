@@ -10,7 +10,7 @@ export function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Calculator className="h-7 w-7 text-primary" />
-          <span className="text-xl font-bold font-headline">FinanceFriend</span>
+          <span className="text-xl font-bold font-headline">GrowthCalculator</span>
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle />

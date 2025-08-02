@@ -45,7 +45,7 @@ export default function Home() {
         </div>
       </main>
       <footer className="text-center py-6 text-muted-foreground text-sm">
-        <p>&copy; {new Date().getFullYear()} FinanceFriend. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} GrowthCalculator. All rights reserved.</p>
       </footer>
     </div>
   );
