@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+
 
 const chartConfig = {
     invested: {
@@ -44,14 +47,14 @@ export function FdCalculator() {
   const [totalValue, setTotalValue] = useState(0);
   const [estReturns, setEstReturns] = useState(0);
 
-  const chartData = useMemo(() => {
+  const yearlyAmortization = useMemo(() => {
     const data = [];
     const n = compoundingFrequencies[compounding];
     const r = returnRate / 100;
     for (let year = 1; year <= timePeriod; year++) {
         const futureValue = principal * Math.pow(1 + r / n, n * year);
         data.push({
-            year: `Year ${year}`,
+            year: year,
             invested: principal,
             returns: Math.round(futureValue - principal),
             total: Math.round(futureValue)
@@ -59,6 +62,10 @@ export function FdCalculator() {
     }
     return data;
   }, [principal, returnRate, timePeriod, compounding]);
+  
+  const chartData = useMemo(() => {
+    return yearlyAmortization.map(item => ({...item, year: `Year ${item.year}`}))
+  }, [yearlyAmortization]);
 
   useEffect(() => {
     const n = compoundingFrequencies[compounding];
@@ -209,6 +216,52 @@ export function FdCalculator() {
                 </Card>
             </div>
         </div>
+         <Card>
+            <CardHeader>
+                <CardTitle>Investment Amortization</CardTitle>
+                <CardDescription>A year-wise breakdown of your investment growth.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-96">
+                    <div className="hidden md:block">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[100px]">Year</TableHead>
+                                    <TableHead>Invested Amount</TableHead>
+                                    <TableHead>Est. Returns</TableHead>
+                                    <TableHead className="text-right">Maturity Value</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {yearlyAmortization.map((row) => (
+                                    <TableRow key={row.year}>
+                                        <TableCell className="font-medium">{row.year}</TableCell>
+                                        <TableCell>{formatCurrency(row.invested)}</TableCell>
+                                        <TableCell>{formatCurrency(row.returns)}</TableCell>
+                                        <TableCell className="text-right font-semibold">{formatCurrency(row.total)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <div className="block md:hidden space-y-4 p-2">
+                        {yearlyAmortization.map((row) => (
+                            <Card key={row.year}>
+                                <CardHeader>
+                                    <CardTitle>Year {row.year}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2 text-sm">
+                                    <div className="flex justify-between"><span>Invested Amount:</span> <span className="font-medium">{formatCurrency(row.invested)}</span></div>
+                                    <div className="flex justify-between"><span>Est. Returns:</span> <span className="font-medium">{formatCurrency(row.returns)}</span></div>
+                                    <div className="flex justify-between font-bold text-base"><span>Maturity Value:</span> <span className="font-bold">{formatCurrency(row.total)}</span></div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
         <Card>
             <CardHeader>
                 <CardTitle>About Fixed Deposit (FD) Calculator</CardTitle>
