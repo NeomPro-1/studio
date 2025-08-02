@@ -41,7 +41,7 @@ export function SipCalculator() {
     const i = returnRate / 100 / 12;
     for (let year = 1; year <= timePeriod; year++) {
         const n = year * 12;
-        const futureValue = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
+        const futureValue = monthlyInvestment * ((Math.pow(1 + i, n) - 1) / i);
         const currentInvestment = monthlyInvestment * n;
         data.push({
             year: `Year ${year}`,
@@ -56,13 +56,20 @@ export function SipCalculator() {
     const i = returnRate / 100 / 12; // monthly interest rate
     const n = timePeriod * 12; // total number of payments
 
-    const totalValueCalc = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
-    const totalInvestedCalc = monthlyInvestment * n;
-    const estReturnsCalc = totalValueCalc - totalInvestedCalc;
+    if (i > 0) {
+      const totalValueCalc = monthlyInvestment * ((Math.pow(1 + i, n) - 1) / i);
+      const totalInvestedCalc = monthlyInvestment * n;
+      const estReturnsCalc = totalValueCalc - totalInvestedCalc;
 
-    setTotalValue(totalValueCalc);
-    setTotalInvested(totalInvestedCalc);
-    setEstReturns(estReturnsCalc);
+      setTotalValue(totalValueCalc);
+      setTotalInvested(totalInvestedCalc);
+      setEstReturns(estReturnsCalc);
+    } else {
+      const totalInvestedCalc = monthlyInvestment * n;
+      setTotalValue(totalInvestedCalc);
+      setTotalInvested(totalInvestedCalc);
+      setEstReturns(0);
+    }
   }, [monthlyInvestment, returnRate, timePeriod]);
 
 
@@ -212,7 +219,7 @@ export function SipCalculator() {
                 </p>
                 <div className="p-4 bg-muted/50 rounded-md">
                     <p className="font-mono text-center text-sm sm:text-base">
-                        M = P × ( ( (1 + i)^n - 1 ) / i ) × (1 + i)
+                        M = P × [((1 + i)^n - 1) / i]
                     </p>
                 </div>
                 <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
