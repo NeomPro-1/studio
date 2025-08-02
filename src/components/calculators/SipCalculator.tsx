@@ -17,6 +17,7 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const chartConfig = {
     invested: {
@@ -29,8 +30,16 @@ const chartConfig = {
     },
 }
 
-type AmortizationData = {
+type YearlyAmortizationData = {
   year: number;
+  totalInvestment: number;
+  interestEarned: number;
+  totalValue: number;
+}
+
+type MonthlyAmortizationData = {
+  month: number;
+  investment: number;
   totalInvestment: number;
   interestEarned: number;
   totalValue: number;
@@ -45,30 +54,28 @@ export function SipCalculator() {
   const [estReturns, setEstReturns] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
 
-  const { chartData, amortizationData } = useMemo(() => {
+  const { chartData, yearlyAmortization, monthlyAmortization } = useMemo(() => {
     const chartDataResult = [{ year: 'Year 0', invested: 0, total: 0 }];
-    const amortizationDataResult: AmortizationData[] = [];
+    const yearlyAmortizationResult: YearlyAmortizationData[] = [];
+    const monthlyAmortizationResult: MonthlyAmortizationData[] = [];
     
     let futureValue = 0;
     let totalInvestment = 0;
     const i = returnRate / 100 / 12;
-    const n = timePeriod * 12;
 
     for (let year = 1; year <= timePeriod; year++) {
-        let yearlyInvestment = 0;
-        let yearlyFutureValue = 0;
-        
-        for (let month = 1; month <= (year * 12); month++) {
-           yearlyFutureValue = monthlyInvestment * (((Math.pow(1 + i, month) - 1) / i) * (1 + i));
-        }
-
-        let currentYearInvestment = 0;
-        let balanceAtYearStart = futureValue;
-
+        let yearStartValue = futureValue;
         for (let month = 1; month <= 12; month++) {
+          let monthStartValue = futureValue;
           futureValue = (futureValue + monthlyInvestment) * (1 + i);
           totalInvestment += monthlyInvestment;
-          currentYearInvestment += monthlyInvestment;
+          monthlyAmortizationResult.push({
+            month: (year - 1) * 12 + month,
+            investment: monthlyInvestment,
+            totalInvestment: totalInvestment,
+            interestEarned: Math.round(futureValue - monthStartValue - monthlyInvestment),
+            totalValue: Math.round(futureValue),
+          });
         }
         
         chartDataResult.push({
@@ -77,16 +84,15 @@ export function SipCalculator() {
             total: Math.round(futureValue)
         });
 
-        amortizationDataResult.push({
+        yearlyAmortizationResult.push({
           year: year,
           totalInvestment: totalInvestment,
           interestEarned: Math.round(futureValue - totalInvestment),
           totalValue: Math.round(futureValue)
         });
     }
-     const finalValue = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
 
-    return { chartData: chartDataResult, amortizationData: amortizationDataResult };
+    return { chartData: chartDataResult, yearlyAmortization: yearlyAmortizationResult, monthlyAmortization: monthlyAmortizationResult };
   }, [monthlyInvestment, returnRate, timePeriod]);
 
   useEffect(() => {
@@ -94,7 +100,6 @@ export function SipCalculator() {
     const i = returnRate / 100 / 12;
     const finalTotalInvested = monthlyInvestment * n;
     
-    // Formula for Future Value of SIP (annuity due)
     const finalTotalValue = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
     
     setTotalValue(finalTotalValue);
@@ -242,48 +247,99 @@ export function SipCalculator() {
         </div>
         <Card>
             <CardHeader>
-                <CardTitle>Year-wise Amortization</CardTitle>
-                <CardDescription>A year-by-year breakdown of your SIP growth.</CardDescription>
+                <CardTitle>Investment Amortization</CardTitle>
+                <CardDescription>A breakdown of your SIP growth.</CardDescription>
             </CardHeader>
             <CardContent>
-                 <ScrollArea className="h-96">
-                    <div className="hidden md:block">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[100px]">Year</TableHead>
-                                    <TableHead>Total Investment</TableHead>
-                                    <TableHead>Interest Earned</TableHead>
-                                    <TableHead className="text-right">Total Value</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {amortizationData.map((row) => (
-                                    <TableRow key={row.year}>
-                                        <TableCell className="font-medium">{row.year}</TableCell>
-                                        <TableCell>{formatCurrency(row.totalInvestment)}</TableCell>
-                                        <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
-                                        <TableCell className="text-right font-semibold">{formatCurrency(row.totalValue)}</TableCell>
-                                    </TableRow>
+                <Tabs defaultValue="yearly" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="yearly">Yearly</TabsTrigger>
+                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="yearly">
+                        <ScrollArea className="h-96">
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Year</TableHead>
+                                            <TableHead>Total Investment</TableHead>
+                                            <TableHead>Interest Earned</TableHead>
+                                            <TableHead className="text-right">Total Value</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {yearlyAmortization.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell className="font-medium">{row.year}</TableCell>
+                                                <TableCell>{formatCurrency(row.totalInvestment)}</TableCell>
+                                                <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                                <TableCell className="text-right font-semibold">{formatCurrency(row.totalValue)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="block md:hidden space-y-4 p-2">
+                                {yearlyAmortization.map((row) => (
+                                    <Card key={row.year}>
+                                        <CardHeader>
+                                            <CardTitle>Year {row.year}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Total Invested:</span> <span className="font-medium">{formatCurrency(row.totalInvestment)}</span></div>
+                                            <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
+                                            <div className="flex justify-between font-bold text-base"><span>Total Value:</span> <span className="font-bold">{formatCurrency(row.totalValue)}</span></div>
+                                        </CardContent>
+                                    </Card>
                                 ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <div className="block md:hidden space-y-4 p-2">
-                        {amortizationData.map((row) => (
-                            <Card key={row.year}>
-                                <CardHeader>
-                                    <CardTitle>Year {row.year}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span>Total Invested:</span> <span className="font-medium">{formatCurrency(row.totalInvestment)}</span></div>
-                                    <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
-                                    <div className="flex justify-between font-bold text-base"><span>Total Value:</span> <span className="font-bold">{formatCurrency(row.totalValue)}</span></div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </ScrollArea>
+                            </div>
+                        </ScrollArea>
+                    </TabsContent>
+                    <TabsContent value="monthly">
+                         <ScrollArea className="h-96">
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[80px]">Month</TableHead>
+                                            <TableHead>Monthly Investment</TableHead>
+                                            <TableHead>Total Investment</TableHead>
+                                            <TableHead>Interest Earned</TableHead>
+                                            <TableHead className="text-right">Total Value</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {monthlyAmortization.map((row) => (
+                                            <TableRow key={row.month}>
+                                                <TableCell className="font-medium">{row.month}</TableCell>
+                                                <TableCell>{formatCurrency(row.investment)}</TableCell>
+                                                <TableCell>{formatCurrency(row.totalInvestment)}</TableCell>
+                                                <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                                <TableCell className="text-right font-semibold">{formatCurrency(row.totalValue)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                             <div className="block md:hidden space-y-4 p-2">
+                                {monthlyAmortization.map((row) => (
+                                    <Card key={row.month}>
+                                        <CardHeader>
+                                            <CardTitle>Month {row.month}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Monthly Investment:</span> <span className="font-medium">{formatCurrency(row.investment)}</span></div>
+                                            <div className="flex justify-between"><span>Total Invested:</span> <span className="font-medium">{formatCurrency(row.totalInvestment)}</span></div>
+                                            <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
+                                            <div className="flex justify-between font-bold text-base"><span>Total Value:</span> <span className="font-bold">{formatCurrency(row.totalValue)}</span></div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                    </TabsContent>
+                </Tabs>
             </CardContent>
         </Card>
         <Card>
@@ -310,3 +366,5 @@ export function SipCalculator() {
     </div>
   );
 }
+
+    
