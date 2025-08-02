@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -41,7 +42,7 @@ export function LoanCalculators() {
                                     <button onClick={() => setActiveLoanTab('car-loan')} className={cn("inline-flex items-center justify-start whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", activeLoanTab === 'car-loan' && "bg-background text-foreground shadow-sm")}>Car Loan</button>
                                </div>
                                 <div className="md:col-span-3">
-                                    {activeLoanTab === 'home-loan' && (
+                                    <div hidden={activeLoanTab !== 'home-loan'}>
                                         <EmiCalculator 
                                             key="home-loan" 
                                             title="Home Loan EMI Calculator"
@@ -49,8 +50,8 @@ export function LoanCalculators() {
                                             defaultInterestRate={8.5}
                                             defaultTenure={20}
                                         />
-                                    )}
-                                    {activeLoanTab === 'personal-loan' && (
+                                    </div>
+                                    <div hidden={activeLoanTab !== 'personal-loan'}>
                                         <EmiCalculator 
                                             key="personal-loan" 
                                             title="Personal Loan EMI Calculator"
@@ -58,8 +59,8 @@ export function LoanCalculators() {
                                             defaultInterestRate={11}
                                             defaultTenure={5}
                                         />
-                                    )}
-                                    {activeLoanTab === 'car-loan' && (
+                                    </div>
+                                    <div hidden={activeLoanTab !== 'car-loan'}>
                                          <EmiCalculator 
                                             key="car-loan" 
                                             title="Car Loan EMI Calculator"
@@ -67,7 +68,7 @@ export function LoanCalculators() {
                                             defaultInterestRate={9.5}
                                             defaultTenure={7}
                                          />
-                                    )}
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
@@ -93,7 +94,7 @@ export function LoanCalculators() {
                                     <button onClick={() => setActiveBankTab('icici')} className={cn("inline-flex items-center justify-start whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50", activeBankTab === 'icici' && "bg-background text-foreground shadow-sm")}>ICICI</button>
                                 </div>
                                 <div className="md:col-span-3">
-                                    {activeBankTab === 'sbi' && (
+                                    <div hidden={activeBankTab !== 'sbi'}>
                                         <EmiCalculator 
                                             key="sbi-loan" 
                                             title="SBI Loan EMI Calculator"
@@ -101,8 +102,8 @@ export function LoanCalculators() {
                                             defaultInterestRate={8.75}
                                             defaultTenure={20}
                                         />
-                                    )}
-                                    {activeBankTab === 'hdfc' && (
+                                    </div>
+                                    <div hidden={activeBankTab !== 'hdfc'}>
                                         <EmiCalculator 
                                             key="hdfc-loan" 
                                             title="HDFC Loan EMI Calculator"
@@ -110,8 +111,8 @@ export function LoanCalculators() {
                                             defaultInterestRate={8.9}
                                             defaultTenure={20}
                                         />
-                                    )}
-                                    {activeBankTab === 'axis' && (
+                                    </div>
+                                    <div hidden={activeBankTab !== 'axis'}>
                                          <EmiCalculator 
                                             key="axis-loan" 
                                             title="Axis Bank Loan EMI Calculator"
@@ -119,8 +120,8 @@ export function LoanCalculators() {
                                             defaultInterestRate={9.1}
                                             defaultTenure={15}
                                          />
-                                    )}
-                                    {activeBankTab === 'icici' && (
+                                    </div>
+                                    <div hidden={activeBankTab !== 'icici'}>
                                          <EmiCalculator 
                                             key="icici-loan" 
                                             title="ICICI Loan EMI Calculator"
@@ -128,7 +129,7 @@ export function LoanCalculators() {
                                             defaultInterestRate={9.0}
                                             defaultTenure={20}
                                          />
-                                    )}
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
