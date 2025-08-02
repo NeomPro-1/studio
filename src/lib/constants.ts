@@ -134,6 +134,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     path: "/calculators/inflation",
     icon: TrendingDown,
   },
+  {
+    name: "Income Tax Calculator",
+    description: "Calculate your income tax for the financial year.",
+    path: "/calculators/tax",
+    icon: FileText,
+  },
 ];
 
 export const CALCULATORS_MAP = new Map(CALCULATORS.map(calc => [calc.name, calc]));
