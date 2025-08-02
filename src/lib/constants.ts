@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -109,6 +109,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Home, car, and personal loan calculators.",
     path: "/calculators/loan",
     icon: Home,
+  },
+  {
+    name: "Loan Prepayment",
+    description: "See how much you can save by prepaying your loan.",
+    path: "/calculators/loan",
+    icon: FastForward
   },
   {
     name: "Income Tax Calculator",

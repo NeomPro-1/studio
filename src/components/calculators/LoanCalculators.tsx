@@ -4,6 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EmiCalculator } from '@/components/calculators/EmiCalculator';
+import { LoanPrepaymentCalculator } from './LoanPrepaymentCalculator';
 
 export function LoanCalculators() {
     return (
@@ -13,8 +14,9 @@ export function LoanCalculators() {
                 <p className="text-muted-foreground mt-2">Choose a calculator for your specific loan needs.</p>
             </div>
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="general">General Calculators</TabsTrigger>
+                    <TabsTrigger value="prepayment">Prepayment Calculator</TabsTrigger>
                     <TabsTrigger value="bank-specific">Bank-Specific Calculators</TabsTrigger>
                 </TabsList>
                 <TabsContent value="general">
@@ -64,6 +66,9 @@ export function LoanCalculators() {
                             </Tabs>
                         </CardContent>
                     </Card>
+                </TabsContent>
+                <TabsContent value="prepayment">
+                    <LoanPrepaymentCalculator />
                 </TabsContent>
                 <TabsContent value="bank-specific">
                     <Card>
