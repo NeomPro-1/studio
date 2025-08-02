@@ -33,6 +33,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: Target,
   },
   {
+    name: "Annuity Calculator",
+    description: "Calculate the monthly payout from a lump-sum investment.",
+    path: "/calculators/annuity",
+    icon: FileText,
+  },
+  {
     name: "Pension Calculator",
     description: "Calculate the monthly pension from a lump-sum investment.",
     path: "/calculators/pension",
