@@ -15,6 +15,8 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const chartConfig = {
     invested: {
@@ -27,6 +29,13 @@ const chartConfig = {
     },
 }
 
+type AmortizationData = {
+  year: number;
+  totalInvestment: number;
+  interestEarned: number;
+  totalValue: number;
+}
+
 export function SipCalculator() {
   const [monthlyInvestment, setMonthlyInvestment] = useState(10000);
   const [returnRate, setReturnRate] = useState(12);
@@ -35,43 +44,53 @@ export function SipCalculator() {
   const [totalInvested, setTotalInvested] = useState(0);
   const [estReturns, setEstReturns] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
-  
-  const chartData = useMemo(() => {
-    const data = [{ year: 'Year 0', invested: 0, total: 0 }];
+
+  const { chartData, amortizationData } = useMemo(() => {
+    const chartDataResult = [{ year: 'Year 0', invested: 0, total: 0 }];
+    const amortizationDataResult: AmortizationData[] = [];
+    
+    let futureValue = 0;
+    let totalInvestment = 0;
     const i = returnRate / 100 / 12;
+
     for (let year = 1; year <= timePeriod; year++) {
-        const n = year * 12;
-        const futureValue = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1+i));
-        const currentInvestment = monthlyInvestment * n;
-        data.push({
+        let yearlyInvestment = 0;
+        for (let month = 1; month <= 12; month++) {
+            futureValue = (futureValue + monthlyInvestment) * (1 + i);
+            yearlyInvestment += monthlyInvestment;
+        }
+        totalInvestment += yearlyInvestment;
+        
+        chartDataResult.push({
             year: `Year ${year}`,
-            invested: Math.round(currentInvestment),
+            invested: Math.round(totalInvestment),
             total: Math.round(futureValue)
         });
+
+        amortizationDataResult.push({
+          year: year,
+          totalInvestment: totalInvestment,
+          interestEarned: Math.round(futureValue - totalInvestment),
+          totalValue: Math.round(futureValue)
+        });
     }
-    return data;
+    return { chartData: chartDataResult, amortizationData: amortizationDataResult };
   }, [monthlyInvestment, returnRate, timePeriod]);
 
   useEffect(() => {
-    const i = returnRate / 100 / 12; // monthly interest rate
-    const n = timePeriod * 12; // total number of payments
-
-    if (i > 0) {
-      // Annuity Due formula: FV = P * [(((1 + r)^n - 1) / r) * (1 + r)]
-      const totalValueCalc = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
-      const totalInvestedCalc = monthlyInvestment * n;
-      const estReturnsCalc = totalValueCalc - totalInvestedCalc;
-
-      setTotalValue(totalValueCalc);
-      setTotalInvested(totalInvestedCalc);
-      setEstReturns(estReturnsCalc);
+    if (amortizationData.length > 0) {
+      const finalData = amortizationData[amortizationData.length - 1];
+      setTotalValue(finalData.totalValue);
+      setTotalInvested(finalData.totalInvestment);
+      setEstReturns(finalData.interestEarned);
     } else {
-      const totalInvestedCalc = monthlyInvestment * n;
-      setTotalValue(totalInvestedCalc);
-      setTotalInvested(totalInvestedCalc);
-      setEstReturns(0);
+        const n = timePeriod * 12;
+        const totalInvestedCalc = monthlyInvestment * n;
+        setTotalValue(totalInvestedCalc);
+        setTotalInvested(totalInvestedCalc);
+        setEstReturns(0);
     }
-  }, [monthlyInvestment, returnRate, timePeriod]);
+  }, [amortizationData, monthlyInvestment, timePeriod]);
 
 
   return (
@@ -210,6 +229,38 @@ export function SipCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Year-wise Amortization</CardTitle>
+                <CardDescription>A year-by-year breakdown of your SIP growth.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-96">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[100px]">Year</TableHead>
+                                <TableHead>Monthly Investment</TableHead>
+                                <TableHead>Total Investment</TableHead>
+                                <TableHead>Interest Earned</TableHead>
+                                <TableHead className="text-right">Total Value</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {amortizationData.map((row) => (
+                                <TableRow key={row.year}>
+                                    <TableCell className="font-medium">{row.year}</TableCell>
+                                    <TableCell>{formatCurrency(monthlyInvestment)}</TableCell>
+                                    <TableCell>{formatCurrency(row.totalInvestment)}</TableCell>
+                                    <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                    <TableCell className="text-right font-semibold">{formatCurrency(row.totalValue)}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </ScrollArea>
+            </CardContent>
+        </Card>
         <Card>
             <CardHeader>
                 <CardTitle>About SIP Calculator</CardTitle>
