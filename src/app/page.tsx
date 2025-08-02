@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import {
   Card,
@@ -51,6 +52,7 @@ export default function Home() {
           <Separator className="my-2 max-w-xs mx-auto" />
           <div className="flex justify-center items-center gap-4">
             <Link href="/disclaimer" className="hover:text-primary hover:underline">Disclaimer</Link>
+            <Link href="/terms" className="hover:text-primary hover:underline">Terms of Use</Link>
           </div>
         </div>
       </footer>
