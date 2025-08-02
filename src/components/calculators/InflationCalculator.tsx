@@ -125,7 +125,11 @@ export function InflationCalculator() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p>
-                           Inflation is the rate at which the general level of prices for goods and services is rising, and subsequently, purchasing power is falling. This calculator is an eye-opener, showing how the value of your hard-earned money can decrease over time. It helps you understand why it's crucial to invest your money in assets that can generate returns higher than the inflation rate, just to maintain your current financial standing.
+                           Inflation is the rate at which the general level of prices for goods and services rises, which means the purchasing power of your money falls. Think of it as a 'silent thief' that slowly eats away at the value of your savings.
+                        </p>
+                        <p className="font-semibold">Here is a simple example:</p>
+                        <p>
+                            Imagine a movie ticket costs 200 today. If inflation is 7% per year, next year that same ticket will cost 214. Your 200 can no longer buy that ticket. In 10 years, that same ticket could cost nearly 400. This calculator shows you this exact effect on your savings, demonstrating why it's crucial to invest your money in assets that generate returns higher than the inflation rate.
                         </p>
                         <div className="p-4 bg-muted/50 rounded-md">
                             <p className="font-mono text-center text-sm sm:text-base">
