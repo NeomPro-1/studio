@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -25,6 +25,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "Calculate the future value of a one-time investment.",
     path: "/calculators/lumpsum",
     icon: Landmark,
+  },
+  {
+    name: "Goal Planner",
+    description: "Plan investments for your financial goals.",
+    path: "/calculators/goal-planner",
+    icon: Target,
   },
   {
     name: "FD Calculator",
