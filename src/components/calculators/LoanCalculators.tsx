@@ -15,9 +15,9 @@ export function LoanCalculators() {
             </div>
             <Tabs defaultValue="general" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="general">General Calculators</TabsTrigger>
-                    <TabsTrigger value="prepayment">Prepayment Calculator</TabsTrigger>
-                    <TabsTrigger value="bank-specific">Bank-Specific Calculators</TabsTrigger>
+                    <TabsTrigger value="general">General</TabsTrigger>
+                    <TabsTrigger value="prepayment">Prepayment</TabsTrigger>
+                    <TabsTrigger value="bank-specific">Bank-Specific</TabsTrigger>
                 </TabsList>
                 <TabsContent value="general">
                     <Card>
