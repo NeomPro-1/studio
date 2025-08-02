@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { formatCurrency, formatPercentage } from '@/lib/formatters';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Switch } from '@/components/ui/switch';
 
 const oldSlabs_below60 = [
     { limit: 250000, rate: 0 },
@@ -65,6 +66,10 @@ export function TaxCalculator() {
   const [assessmentYear, setAssessmentYear] = useState('2025-2026');
   const [ageCategory, setAgeCategory] = useState('below_60');
   const [taxRegime, setTaxRegime] = useState('new');
+  const [isCtcMode, setIsCtcMode] = useState(false);
+
+  // CTC Mode
+  const [ctc, setCtc] = useState(1000000);
 
   // Income
   const [grossSalary, setGrossSalary] = useState(0);
@@ -75,6 +80,8 @@ export function TaxCalculator() {
   const [interestLetOut, setInterestLetOut] = useState(0);
   
   // Deductions
+  const [epfContribution, setEpfContribution] = useState(0);
+  const [hraExemption, setHraExemption] = useState(0);
   const [basicDeductions80C, setBasicDeductions80C] = useState(0);
   const [npsContribution, setNpsContribution] = useState(0);
   const [medicalPremium, setMedicalPremium] = useState(0);
@@ -83,31 +90,59 @@ export function TaxCalculator() {
   const [savingsInterest, setSavingsInterest] = useState(0);
 
   // HRA
-  const [hraBasicSalary, setHraBasicSalary] = useState(0);
-  const [hraDa, setHraDa] = useState(0);
-  const [hraReceived, setHraReceived] = useState(0);
   const [rentPaid, setRentPaid] = useState(0);
+  const [isMetroCity, setIsMetroCity] = useState(true);
 
   // Results
   const [taxableIncome, setTaxableIncome] = useState(0);
   const [taxPayable, setTaxPayable] = useState(0);
   const [effectiveTaxRate, setEffectiveTaxRate] = useState(0);
+  const [inHandSalary, setInHandSalary] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [resultBreakdown, setResultBreakdown] = useState<any>({});
+
+
+  useEffect(() => {
+    if (isCtcMode) {
+      const basicSalary = ctc * 0.4; // 40% of CTC
+      const hra = basicSalary * (isMetroCity ? 0.5 : 0.4);
+      const employerEpf = Math.min(basicSalary * 0.12, 1800); // 12% of basic, capped at 1800/month
+      
+      const employeeEpf = employerEpf;
+      const specialAllowance = ctc - basicSalary - hra - (employerEpf * 12);
+      
+      const calculatedGrossSalary = basicSalary + hra + specialAllowance;
+      
+      setGrossSalary(calculatedGrossSalary);
+      setEpfContribution(employeeEpf * 12);
+    }
+  }, [ctc, isCtcMode, isMetroCity]);
+
 
   const handleCalculate = () => {
+    // Determine Basic salary for HRA calc
+    const basicForHra = isCtcMode ? ctc * 0.4 : grossSalary * 0.5; // assumption
+    
+    // HRA Exemption Calculation
+    const hraReceivedComponent = isCtcMode ? basicForHra * (isMetroCity ? 0.5 : 0.4) : 0;
+    const rentCondition = rentPaid - (basicForHra * 0.1);
+    const cityCondition = basicForHra * (isMetroCity ? 0.5 : 0.4);
+    const hraExemptionCalc = Math.max(0, Math.min(hraReceivedComponent, rentCondition, cityCondition));
+    setHraExemption(hraExemptionCalc);
+
     const totalGrossIncome = grossSalary + otherSources + interestIncome + rentalIncome;
     let finalTaxableIncome = 0;
     let finalTax = 0;
+    let finalInHandSalary = 0;
     const isOldRegime = taxRegime === 'old';
 
+    // Deductions common to both modes
+    const totalEpf = epfContribution;
+    const professionalTax = 2500; // Fixed for most states
+
     if (isOldRegime) {
-      const hraExemptionComponent1 = hraReceived;
-      const hraExemptionComponent2 = (hraBasicSalary + hraDa) * 0.5; // Assuming metro city
-      const hraExemptionComponent3 = rentPaid > 0 ? rentPaid - (hraBasicSalary + hraDa) * 0.1 : 0;
-      const finalHraExemption = Math.max(0, Math.min(hraExemptionComponent1, hraExemptionComponent2, hraExemptionComponent3));
-      
       const totalDeductions =
-          Math.min(150000, basicDeductions80C) +
+          Math.min(150000, basicDeductions80C + totalEpf) +
           Math.min(50000, npsContribution) +
           Math.min(25000, medicalPremium) + // Assuming below 60 for simplicity
           donation +
@@ -115,9 +150,10 @@ export function TaxCalculator() {
           Math.min(10000, savingsInterest) +
           Math.min(200000, interestSelfOccupied) +
           interestLetOut +
-          (grossSalary > 0 ? 50000 : 0); // Standard Deduction for old regime (salaried)
+          (grossSalary > 0 ? 50000 : 0) + // Standard Deduction
+          hraExemptionCalc;
 
-      const grossTaxableIncome = totalGrossIncome - finalHraExemption;
+      const grossTaxableIncome = totalGrossIncome;
       finalTaxableIncome = Math.max(0, grossTaxableIncome - totalDeductions);
       
       let slabs;
@@ -133,6 +169,7 @@ export function TaxCalculator() {
 
       const cess = tax * 0.04;
       finalTax = tax > 0 ? tax + cess : 0;
+      finalInHandSalary = totalGrossIncome - finalTax - totalEpf - professionalTax;
 
     } else { // New Regime
       const standardDeduction = (grossSalary > 0 ? 50000 : 0);
@@ -145,11 +182,29 @@ export function TaxCalculator() {
       
       const cess = tax * 0.04;
       finalTax = tax > 0 ? tax + cess : 0;
+      finalInHandSalary = totalGrossIncome - finalTax - totalEpf - professionalTax;
     }
     
     setTaxableIncome(finalTaxableIncome);
     setTaxPayable(finalTax);
+    setInHandSalary(finalInHandSalary);
     setEffectiveTaxRate(totalGrossIncome > 0 ? (finalTax / totalGrossIncome) * 100 : 0);
+    
+    if(isCtcMode) {
+        const basic = ctc * 0.4;
+        const hra = basic * (isMetroCity ? 0.5 : 0.4);
+        const employerEpf = Math.min(basic * 0.12, 1800) * 12;
+        const specialAllowance = ctc - basic - hra - employerEpf;
+
+        setResultBreakdown({
+            basic, hra, specialAllowance, employerEpf,
+            employeeEpf: epfContribution,
+            gross: basic+hra+specialAllowance,
+            inHand: finalInHandSalary,
+            tax: finalTax
+        })
+    }
+
     setShowResults(true);
   };
   
@@ -173,11 +228,37 @@ export function TaxCalculator() {
   return (
     <div className="space-y-8">
         <div className="text-center">
-            <h1 className="text-3xl font-bold font-headline">Income Tax Calculator</h1>
-            <p className="text-muted-foreground mt-2">Estimate your income tax for the financial year.</p>
+            <h1 className="text-3xl font-bold font-headline">Salary & Income Tax Calculator</h1>
+            <p className="text-muted-foreground mt-2">Estimate your take-home salary and income tax liability.</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Calculation Mode</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex items-center space-x-2">
+                        <Label htmlFor="ctc-mode">Manual Income Entry</Label>
+                        <Switch id="ctc-mode" checked={isCtcMode} onCheckedChange={setIsCtcMode} />
+                        <Label htmlFor="ctc-mode">CTC Breakup</Label>
+                    </CardContent>
+                </Card>
+                {isCtcMode && (
+                  <Card>
+                    <CardHeader><CardTitle>Enter Your CTC</CardTitle></CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-1">
+                            <Label>Annual CTC (Cost to Company)</Label>
+                            <Input type="text" value={displayFormattedCurrency(ctc)} onChange={handleInputChange(setCtc)} />
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Switch id="metro-city" checked={isMetroCity} onCheckedChange={setIsMetroCity} />
+                            <Label htmlFor="metro-city">Do you live in a metro city? (for HRA calculation)</Label>
+                        </div>
+                        <p className="text-xs text-muted-foreground">This mode automatically estimates your salary components based on standard industry practices (e.g., Basic at 40% of CTC). You can adjust these in the 'Income Details' section below.</p>
+                    </CardContent>
+                  </Card>
+                )}
                 <Card>
                     <CardHeader>
                         <CardTitle>Configuration</CardTitle>
@@ -226,7 +307,7 @@ export function TaxCalculator() {
                         <AccordionContent>
                              <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1"><Label>Gross salary income</Label><Input type="text" value={displayFormattedCurrency(grossSalary)} onChange={handleInputChange(setGrossSalary)} /></div>
+                                    <div className="space-y-1"><Label>Gross salary income</Label><Input type="text" value={displayFormattedCurrency(grossSalary)} onChange={handleInputChange(setGrossSalary)} disabled={isCtcMode}/></div>
                                     <div className="space-y-1"><Label>Income from other sources</Label><Input type="text" value={displayFormattedCurrency(otherSources)} onChange={handleInputChange(setOtherSources)} /></div>
                                     <div className="space-y-1"><Label>Income from interest</Label><Input type="text" value={displayFormattedCurrency(interestIncome)} onChange={handleInputChange(setInterestIncome)} /></div>
                                     <div className="space-y-1"><Label>Rental income (let-out)</Label><Input type="text" value={displayFormattedCurrency(rentalIncome)} onChange={handleInputChange(setRentalIncome)} /></div>
@@ -241,25 +322,14 @@ export function TaxCalculator() {
                         <AccordionContent>
                              <Card>
                                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1"><Label>Basic Deductions u/s 80C</Label><Input type="text" value={displayFormattedCurrency(basicDeductions80C)} onChange={handleInputChange(setBasicDeductions80C)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Your EPF Contribution (12% of Basic)</Label><Input type="text" value={displayFormattedCurrency(epfContribution)} onChange={handleInputChange(setEpfContribution)} disabled={isCtcMode} /></div>
+                                    <div className="space-y-1"><Label>Total rent paid per annum (for HRA)</Label><Input type="text" value={displayFormattedCurrency(rentPaid)} onChange={handleInputChange(setRentPaid)} disabled={!isOldRegime} /></div>
+                                    <div className="space-y-1"><Label>Other Deductions u/s 80C</Label><Input type="text" value={displayFormattedCurrency(basicDeductions80C)} onChange={handleInputChange(setBasicDeductions80C)} disabled={!isOldRegime} /></div>
                                     <div className="space-y-1"><Label>Contribution to NPS u/s 80CCD(1B)</Label><Input type="text" value={displayFormattedCurrency(npsContribution)} onChange={handleInputChange(setNpsContribution)} disabled={!isOldRegime} /></div>
                                     <div className="space-y-1"><Label>Medical Insurance Premium u/s 80D</Label><Input type="text" value={displayFormattedCurrency(medicalPremium)} onChange={handleInputChange(setMedicalPremium)} disabled={!isOldRegime} /></div>
                                     <div className="space-y-1"><Label>Donation to charity u/s 80G</Label><Input type="text" value={displayFormattedCurrency(donation)} onChange={handleInputChange(setDonation)} disabled={!isOldRegime} /></div>
                                     <div className="space-y-1"><Label>Interest on Educational Loan u/s 80E</Label><Input type="text" value={displayFormattedCurrency(educationLoanInterest)} onChange={handleInputChange(setEducationLoanInterest)} disabled={!isOldRegime} /></div>
                                     <div className="space-y-1"><Label>Interest on Deposits u/s 80TTA/TTB</Label><Input type="text" value={displayFormattedCurrency(savingsInterest)} onChange={handleInputChange(setSavingsInterest)} disabled={!isOldRegime} /></div>
-                                </CardContent>
-                            </Card>
-                        </AccordionContent>
-                    </AccordionItem>
-                     <AccordionItem value="hra-exemption">
-                        <AccordionTrigger className="text-lg font-semibold">HRA Exemption</AccordionTrigger>
-                        <AccordionContent>
-                            <Card>
-                                <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1"><Label>Basic Salary per annum</Label><Input type="text" value={displayFormattedCurrency(hraBasicSalary)} onChange={handleInputChange(setHraBasicSalary)} disabled={!isOldRegime} /></div>
-                                    <div className="space-y-1"><Label>Dearness Allowance (DA) per annum</Label><Input type="text" value={displayFormattedCurrency(hraDa)} onChange={handleInputChange(setHraDa)} disabled={!isOldRegime} /></div>
-                                    <div className="space-y-1"><Label>HRA received per annum</Label><Input type="text" value={displayFormattedCurrency(hraReceived)} onChange={handleInputChange(setHraReceived)} disabled={!isOldRegime} /></div>
-                                    <div className="space-y-1"><Label>Total rent paid per annum</Label><Input type="text" value={displayFormattedCurrency(rentPaid)} onChange={handleInputChange(setRentPaid)} disabled={!isOldRegime} /></div>
                                 </CardContent>
                             </Card>
                         </AccordionContent>
@@ -270,28 +340,50 @@ export function TaxCalculator() {
 
             <Card className="lg:col-span-1 h-fit sticky top-24">
                 <CardHeader>
-                    <CardTitle>Tax Summary</CardTitle>
+                    <CardTitle>Tax & Salary Summary</CardTitle>
                     <CardDescription>Based on the {taxRegime === 'new' ? 'New' : 'Old'} Tax Regime.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 text-center">
                     {showResults ? (
                         <>
-                            <Card className="p-4">
-                                <CardDescription>Taxable Income</CardDescription>
-                                <p className="text-2xl font-bold">
-                                    {formatCurrency(taxableIncome)}
-                                </p>
+                            <Card className="p-4 bg-primary/10">
+                                <CardDescription>Monthly In-Hand Salary</CardDescription>
+                                <p className="text-3xl font-bold text-primary">{formatCurrency(inHandSalary / 12)}</p>
                             </Card>
-                            <Card className="p-4">
-                                <CardDescription>Effective Tax Rate</CardDescription>
-                                <p className="text-2xl font-bold">
-                                    {formatPercentage(effectiveTaxRate)}
-                                </p>
-                            </Card>
-                             <Card className="p-6 bg-primary/10">
+                             <Card className="p-4">
                                 <CardDescription>Total Tax Payable</CardDescription>
-                                <p className="text-3xl font-bold text-primary">{formatCurrency(taxPayable)}</p>
+                                <p className="text-2xl font-bold">{formatCurrency(taxPayable)}</p>
                             </Card>
+                             <Card className="p-4">
+                                <CardDescription>Effective Tax Rate</CardDescription>
+                                <p className="text-2xl font-bold">{formatPercentage(effectiveTaxRate)}</p>
+                            </Card>
+                           
+                           {isCtcMode && (
+                             <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="breakdown">
+                                    <AccordionTrigger>View Salary Breakdown</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="text-left space-y-2 text-sm p-2">
+                                            <div className="flex justify-between"><span>CTC</span> <span className="font-mono">{formatCurrency(ctc)}</span></div>
+                                            <hr className="border-dashed" />
+                                            <div className="flex justify-between"><span>Basic Salary</span> <span className="font-mono">{formatCurrency(resultBreakdown.basic)}</span></div>
+                                            <div className="flex justify-between"><span>HRA</span> <span className="font-mono">{formatCurrency(resultBreakdown.hra)}</span></div>
+                                            <div className="flex justify-between"><span>Special Allowance</span> <span className="font-mono">{formatCurrency(resultBreakdown.specialAllowance)}</span></div>
+                                            <div className="flex justify-between"><span>Employer's EPF</span> <span className="font-mono">{formatCurrency(resultBreakdown.employerEpf)}</span></div>
+                                            <hr/>
+                                            <div className="flex justify-between font-bold"><span>Gross Salary</span> <span className="font-mono">{formatCurrency(resultBreakdown.gross)}</span></div>
+                                            <hr className="border-dashed" />
+                                             <div className="flex justify-between text-destructive"><span>(-) Income Tax</span> <span className="font-mono">{formatCurrency(resultBreakdown.tax)}</span></div>
+                                              <div className="flex justify-between text-destructive"><span>(-) Employee's EPF</span> <span className="font-mono">{formatCurrency(resultBreakdown.employeeEpf)}</span></div>
+                                              <div className="flex justify-between text-destructive"><span>(-) Professional Tax</span> <span className="font-mono">{formatCurrency(2500)}</span></div>
+                                            <hr/>
+                                            <div className="flex justify-between font-bold text-primary"><span>Net In-Hand (Annual)</span> <span className="font-mono">{formatCurrency(resultBreakdown.inHand)}</span></div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                             </Accordion>
+                           )}
                         </>
                     ) : (
                         <p className="text-muted-foreground py-12">Click "Calculate Tax" to see your results.</p>
@@ -301,26 +393,26 @@ export function TaxCalculator() {
         </div>
          <Card>
             <CardHeader>
-                <CardTitle>About Income Tax Calculator</CardTitle>
+                <CardTitle>About The Salary & Tax Calculator</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <p>
-                    This Income Tax Calculator helps you estimate your tax liability for a financial year based on your income and eligible deductions. It supports both the Old and New Tax Regimes, allowing you to compare and choose the more beneficial option. Proper tax planning is crucial for maximizing your savings and ensuring compliance with tax laws. This tool simplifies the complex calculations involved in determining your taxable income and final tax payable.
+                    This powerful calculator helps you understand your salary structure and tax liability. You can either enter your Cost-to-Company (CTC) to get an estimated breakdown, or manually enter your income details for a precise calculation. It supports both Old and New Tax Regimes, allowing you to compare and choose the more beneficial option.
                 </p>
                 <div className="p-4 bg-muted/50 rounded-md">
                     <p className="font-mono text-center text-sm sm:text-base">
-                       Taxable Income = Gross Income - Deductions
-                    </p>
-                     <p className="font-mono text-center text-sm sm:text-base mt-2">
-                        Tax Payable = (Tax on Income as per Slabs) + Surcharge + Cess
+                       In-Hand Salary = Gross Salary - Income Tax - Employee's EPF - Other Deductions
                     </p>
                 </div>
                  <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-                    <li><span className="font-semibold text-foreground">Old Regime:</span> Allows various deductions (80C, 80D, HRA etc.) but has higher tax rates.</li>
-                    <li><span className="font-semibold text-foreground">New Regime:</span> Offers lower tax rates but fewer deductions. A standard deduction of ₹50,000 is available.</li>
+                    <li><span className="font-semibold text-foreground">CTC Mode:</span> Provides an estimated breakdown of your salary components based on your CTC. Ideal for a quick overview.</li>
+                    <li><span className="font-semibold text-foreground">Manual Mode:</span> Allows you to enter specific income and deduction figures for a more accurate calculation.</li>
+                    <li><span className="font-semibold text-foreground">Tax Regimes:</span> Compare the Old Regime (with deductions) and the New Regime (with lower rates but fewer deductions) to see which saves you more money.</li>
                 </ul>
             </CardContent>
         </Card>
     </div>
   );
 }
+
+    
