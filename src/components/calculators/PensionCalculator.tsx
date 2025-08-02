@@ -13,12 +13,22 @@ import {
   ChartTooltipContent
 } from "@/components/ui/chart"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const chartConfig = {
     balance: {
       label: "Remaining Balance",
       color: "hsl(var(--primary))",
     },
+}
+
+type AmortizationData = {
+    year: number;
+    openingBalance: number;
+    withdrawn: number;
+    interestEarned: number;
+    closingBalance: number;
 }
 
 export function PensionCalculator() {
@@ -30,24 +40,50 @@ export function PensionCalculator() {
   const [totalPayout, setTotalPayout] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
   
-  const chartData = useMemo(() => {
-    if (monthlyPayout <= 0) return [{ year: 'Year 0', balance: principal }];
+  const { chartData, yearlyAmortization } = useMemo(() => {
+    if (monthlyPayout <= 0) {
+        return {
+            chartData: [{ year: 'Year 0', balance: principal }],
+            yearlyAmortization: [],
+        };
+    }
     
-    const data = [{ year: 'Year 0', balance: principal }];
+    const chartDataResult = [{ year: 'Year 0', balance: principal }];
+    const yearlyAmortizationResult: AmortizationData[] = [];
     let balance = principal;
     const monthlyRate = interestRate / 100 / 12;
 
     for (let year = 1; year <= payoutYears; year++) {
+        const openingBalance = balance;
+        let interestForYear = 0;
+        let withdrawnForYear = 0;
+
         for (let month = 1; month <= 12; month++) {
-            balance = balance * (1 + monthlyRate) - monthlyPayout;
+            const interest = balance * monthlyRate;
+            interestForYear += interest;
+            balance += interest;
+            balance -= monthlyPayout;
+            withdrawnForYear += monthlyPayout;
         }
-        data.push({
-            year: `Year ${year}`,
-            balance: Math.max(0, balance),
+
+        const closingBalance = Math.max(0, balance);
+        
+        yearlyAmortizationResult.push({
+            year,
+            openingBalance,
+            withdrawn: withdrawnForYear,
+            interestEarned: interestForYear,
+            closingBalance,
         });
+
+        chartDataResult.push({
+            year: `Year ${year}`,
+            balance: closingBalance,
+        });
+
         if (balance <= 0) break;
     }
-    return data;
+    return { chartData: chartDataResult, yearlyAmortization: yearlyAmortizationResult };
   }, [principal, interestRate, payoutYears, monthlyPayout]);
 
 
@@ -202,6 +238,55 @@ export function PensionCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Payout Amortization</CardTitle>
+                <CardDescription>A year-wise breakdown of your pension plan.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-96">
+                     <div className="hidden md:block">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[100px]">Year</TableHead>
+                                    <TableHead>Opening Balance</TableHead>
+                                    <TableHead>Annual Withdrawal</TableHead>
+                                    <TableHead>Interest Earned</TableHead>
+                                    <TableHead className="text-right">Closing Balance</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {yearlyAmortization.map((row) => (
+                                    <TableRow key={row.year}>
+                                        <TableCell className="font-medium">{row.year}</TableCell>
+                                        <TableCell>{formatCurrency(row.openingBalance)}</TableCell>
+                                        <TableCell>{formatCurrency(row.withdrawn)}</TableCell>
+                                        <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                        <TableCell className="text-right font-semibold">{formatCurrency(row.closingBalance)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <div className="block md:hidden space-y-4 p-2">
+                        {yearlyAmortization.map((row) => (
+                            <Card key={row.year}>
+                                <CardHeader>
+                                    <CardTitle>Year {row.year}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2 text-sm">
+                                    <div className="flex justify-between"><span>Opening Balance:</span> <span className="font-medium">{formatCurrency(row.openingBalance)}</span></div>
+                                    <div className="flex justify-between"><span>Annual Withdrawal:</span> <span className="font-medium">{formatCurrency(row.withdrawn)}</span></div>
+                                    <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
+                                    <div className="flex justify-between font-bold text-base"><span>Closing Balance:</span> <span className="font-bold">{formatCurrency(row.closingBalance)}</span></div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
         <Card>
             <CardHeader>
                 <CardTitle>About Pension Calculator</CardTitle>
