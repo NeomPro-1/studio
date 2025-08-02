@@ -15,6 +15,8 @@ import {
   ChartLegendContent
 } from "@/components/ui/chart"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const chartConfig = {
     invested: {
@@ -27,6 +29,13 @@ const chartConfig = {
     },
 }
 
+type YearlyAmortizationData = {
+  year: number;
+  totalInvestment: number;
+  interestEarned: number;
+  totalValue: number;
+}
+
 export function StepUpSipCalculator() {
   const [monthlyInvestment, setMonthlyInvestment] = useState(10000);
   const [annualIncrease, setAnnualIncrease] = useState(10);
@@ -37,8 +46,9 @@ export function StepUpSipCalculator() {
   const [estReturns, setEstReturns] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
 
-  const chartData = useMemo(() => {
-    const data = [{ year: 'Year 0', invested: 0, total: 0 }];
+  const { chartData, yearlyAmortization } = useMemo(() => {
+    const chartDataResult = [{ year: 'Year 0', invested: 0, total: 0 }];
+    const yearlyAmortizationResult: YearlyAmortizationData[] = [];
     const monthlyRate = returnRate / 100 / 12;
     let futureValue = 0;
     let totalInvestedAmount = 0;
@@ -49,35 +59,30 @@ export function StepUpSipCalculator() {
         futureValue = (futureValue + currentMonthlyInvestment) * (1 + monthlyRate);
         totalInvestedAmount += currentMonthlyInvestment;
       }
-      data.push({
+      chartDataResult.push({
         year: `Year ${year}`,
         invested: Math.round(totalInvestedAmount),
         total: Math.round(futureValue),
       });
+      yearlyAmortizationResult.push({
+        year: year,
+        totalInvestment: totalInvestedAmount,
+        interestEarned: futureValue - totalInvestedAmount,
+        totalValue: futureValue
+      });
       // Apply annual increase at the end of the year
       currentMonthlyInvestment *= (1 + annualIncrease / 100);
     }
-    return data;
+    return { chartData: chartDataResult, yearlyAmortization: yearlyAmortizationResult };
   }, [monthlyInvestment, annualIncrease, returnRate, timePeriod]);
 
   useEffect(() => {
-    const monthlyRate = returnRate / 100 / 12;
-    let finalFutureValue = 0;
-    let finalTotalInvested = 0;
-    let currentMonthlyInvestment = monthlyInvestment;
-
-    for (let year = 0; year < timePeriod; year++) {
-      for (let month = 0; month < 12; month++) {
-        finalFutureValue += currentMonthlyInvestment * Math.pow(1 + monthlyRate, (timePeriod * 12) - (year * 12 + month));
-        finalTotalInvested += currentMonthlyInvestment;
-      }
-      currentMonthlyInvestment *= (1 + annualIncrease / 100);
-    }
-
     // A more direct calculation for final values
     let finalValue = 0;
     let totalInv = 0;
     let mi = monthlyInvestment;
+    const monthlyRate = returnRate / 100 / 12;
+
     for (let year = 1; year <= timePeriod; year++) {
         for (let month = 1; month <= 12; month++) {
             finalValue = (finalValue + mi) * (1 + monthlyRate);
@@ -248,6 +253,52 @@ export function StepUpSipCalculator() {
                 </Card>
             </div>
         </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Investment Amortization</CardTitle>
+                <CardDescription>A year-wise breakdown of your investment growth.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ScrollArea className="h-96">
+                    <div className="hidden md:block">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[100px]">Year</TableHead>
+                                    <TableHead>Total Investment</TableHead>
+                                    <TableHead>Interest Earned</TableHead>
+                                    <TableHead className="text-right">Total Value</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {yearlyAmortization.map((row) => (
+                                    <TableRow key={row.year}>
+                                        <TableCell className="font-medium">{row.year}</TableCell>
+                                        <TableCell>{formatCurrency(row.totalInvestment)}</TableCell>
+                                        <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                        <TableCell className="text-right font-semibold">{formatCurrency(row.totalValue)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
+                    <div className="block md:hidden space-y-4 p-2">
+                        {yearlyAmortization.map((row) => (
+                            <Card key={row.year}>
+                                <CardHeader>
+                                    <CardTitle>Year {row.year}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2 text-sm">
+                                    <div className="flex justify-between"><span>Total Invested:</span> <span className="font-medium">{formatCurrency(row.totalInvestment)}</span></div>
+                                    <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
+                                    <div className="flex justify-between font-bold text-base"><span>Total Value:</span> <span className="font-bold">{formatCurrency(row.totalValue)}</span></div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </ScrollArea>
+            </CardContent>
+        </Card>
         <Card>
             <CardHeader>
                 <CardTitle>About Step-up SIP Calculator</CardTitle>
