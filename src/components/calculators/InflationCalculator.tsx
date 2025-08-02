@@ -129,7 +129,11 @@ export function InflationCalculator() {
                         </p>
                         <p className="font-semibold">Here is a simple example:</p>
                         <p>
-                            Imagine a movie ticket costs 200 today. If inflation is 7% per year, next year that same ticket will cost 214. Your 200 can no longer buy that ticket. In 10 years, that same ticket could cost nearly 400. This calculator shows you this exact effect on your savings, demonstrating why it's crucial to invest your money in assets that generate returns higher than the inflation rate.
+                            Imagine a movie ticket costs 200 today. If inflation is 7% per year, next year that same ticket will cost 214. Your 200 can no longer buy that ticket. In 10 years, that same ticket could cost nearly 400. This calculator shows you this exact effect on your savings.
+                        </p>
+                        <p className="font-semibold">How do you stay profitable?</p>
+                        <p>
+                          The key to overcoming inflation is to invest your money in assets that are expected to generate returns higher than the inflation rate. If inflation is 6%, but your investments are growing at 10%, you are not just preserving your wealth—you are increasing your purchasing power by 4% every year. This is how you build real wealth.
                         </p>
                         <div className="p-4 bg-muted/50 rounded-md">
                             <p className="font-mono text-center text-sm sm:text-base">
