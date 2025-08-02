@@ -140,7 +140,8 @@ export function TaxCalculator() {
         setTaxCalculationResult({ oldTax: Math.round(oldTax), newTax: Math.round(newTax) });
     };
     
-    const assessmentYears = Array.from({ length: 7 }, (_, i) => `${2020 + i}-${2021 + i}`).reverse();
+    const currentYear = new Date().getFullYear();
+    const assessmentYears = Array.from({ length: currentYear + 2 - 2000 }, (_, i) => `${2000 + i}-${2001 + i}`).reverse();
 
     return (
         <div className="space-y-8">
