@@ -17,6 +17,7 @@ import {
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
 const chartConfig = {
@@ -26,8 +27,16 @@ const chartConfig = {
     },
 }
 
-type AmortizationData = {
+type YearlyAmortizationData = {
     year: number;
+    openingBalance: number;
+    withdrawn: number;
+    interestEarned: number;
+    closingBalance: number;
+}
+
+type MonthlyAmortizationData = {
+    month: number;
     openingBalance: number;
     withdrawn: number;
     interestEarned: number;
@@ -46,44 +55,61 @@ export function SwpCalculator() {
   const [totalWithdrawn, setTotalWithdrawn] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
 
-  const { chartData, yearlyAmortization } = useMemo(() => {
+  const { chartData, yearlyAmortization, monthlyAmortization } = useMemo(() => {
     const chartDataResult = [];
-    const yearlyAmortizationResult: AmortizationData[] = [];
+    const yearlyAmortizationResult: YearlyAmortizationData[] = [];
+    const monthlyAmortizationResult: MonthlyAmortizationData[] = [];
 
     let balance = totalInvestment;
     const monthlyRate = expectedReturnRate / 100 / 12;
 
+    let monthCounter = 0;
+    
     for (let year = 1; year <= timePeriod; year++) {
-        const openingBalance = balance;
+        const openingBalanceYearly = balance;
         let interestForYear = 0;
         let withdrawnForYear = 0;
 
-        for (let month = 1; month <= 12; month++) {
+        for (let monthInYear = 1; monthInYear <= 12; monthInYear++) {
+            if (balance <= 0) break;
+            
+            monthCounter++;
+            const openingBalanceMonthly = balance;
             const interest = balance * monthlyRate;
             interestForYear += interest;
             balance += interest;
-            balance -= withdrawalPerMonth;
-            withdrawnForYear += withdrawalPerMonth;
+            
+            const actualWithdrawal = Math.min(balance, withdrawalPerMonth);
+            balance -= actualWithdrawal;
+            withdrawnForYear += actualWithdrawal;
+            
+            monthlyAmortizationResult.push({
+                month: monthCounter,
+                openingBalance: openingBalanceMonthly,
+                withdrawn: actualWithdrawal,
+                interestEarned: interest,
+                closingBalance: balance,
+            });
         }
-
-        const closingBalance = Math.max(0, balance);
+        
+        const closingBalanceYearly = Math.max(0, balance);
         
         yearlyAmortizationResult.push({
             year,
-            openingBalance,
+            openingBalance: openingBalanceYearly,
             withdrawn: withdrawnForYear,
             interestEarned: interestForYear,
-            closingBalance,
+            closingBalance: closingBalanceYearly,
         });
 
         chartDataResult.push({
             year: `Year ${year}`,
-            balance: closingBalance,
+            balance: closingBalanceYearly,
         });
 
         if (balance <= 0) break;
     }
-    return { chartData: chartDataResult, yearlyAmortization: yearlyAmortizationResult };
+    return { chartData: chartDataResult, yearlyAmortization: yearlyAmortizationResult, monthlyAmortization: monthlyAmortizationResult };
   }, [totalInvestment, withdrawalPerMonth, expectedReturnRate, timePeriod]);
 
 
@@ -279,50 +305,101 @@ export function SwpCalculator() {
         <Card>
             <CardHeader>
                 <CardTitle>Payout Amortization</CardTitle>
-                <CardDescription>A year-wise breakdown of your SWP.</CardDescription>
+                <CardDescription>A breakdown of your SWP.</CardDescription>
             </CardHeader>
             <CardContent>
-                 <ScrollArea className="h-96">
-                     <div className="hidden md:block">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[100px]">Year</TableHead>
-                                    <TableHead>Opening Balance</TableHead>
-                                    <TableHead>Annual Withdrawal</TableHead>
-                                    <TableHead>Interest Earned</TableHead>
-                                    <TableHead className="text-right">Closing Balance</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
+                <Tabs defaultValue="yearly" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="yearly">Yearly</TabsTrigger>
+                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="yearly">
+                        <ScrollArea className="h-96">
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Year</TableHead>
+                                            <TableHead>Opening Balance</TableHead>
+                                            <TableHead>Annual Withdrawal</TableHead>
+                                            <TableHead>Interest Earned</TableHead>
+                                            <TableHead className="text-right">Closing Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {yearlyAmortization.map((row) => (
+                                            <TableRow key={row.year}>
+                                                <TableCell className="font-medium">{row.year}</TableCell>
+                                                <TableCell>{formatCurrency(row.openingBalance)}</TableCell>
+                                                <TableCell>{formatCurrency(row.withdrawn)}</TableCell>
+                                                <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                                <TableCell className="text-right font-semibold">{formatCurrency(row.closingBalance)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="block md:hidden space-y-4 p-2">
                                 {yearlyAmortization.map((row) => (
-                                    <TableRow key={row.year}>
-                                        <TableCell className="font-medium">{row.year}</TableCell>
-                                        <TableCell>{formatCurrency(row.openingBalance)}</TableCell>
-                                        <TableCell>{formatCurrency(row.withdrawn)}</TableCell>
-                                        <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
-                                        <TableCell className="text-right font-semibold">{formatCurrency(row.closingBalance)}</TableCell>
-                                    </TableRow>
+                                    <Card key={row.year}>
+                                        <CardHeader>
+                                            <CardTitle>Year {row.year}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Opening Balance:</span> <span className="font-medium">{formatCurrency(row.openingBalance)}</span></div>
+                                            <div className="flex justify-between"><span>Annual Withdrawal:</span> <span className="font-medium">{formatCurrency(row.withdrawn)}</span></div>
+                                            <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
+                                            <div className="flex justify-between font-bold text-base"><span>Closing Balance:</span> <span className="font-bold">{formatCurrency(row.closingBalance)}</span></div>
+                                        </CardContent>
+                                    </Card>
                                 ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                    <div className="block md:hidden space-y-4 p-2">
-                        {yearlyAmortization.map((row) => (
-                            <Card key={row.year}>
-                                <CardHeader>
-                                    <CardTitle>Year {row.year}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2 text-sm">
-                                    <div className="flex justify-between"><span>Opening Balance:</span> <span className="font-medium">{formatCurrency(row.openingBalance)}</span></div>
-                                    <div className="flex justify-between"><span>Annual Withdrawal:</span> <span className="font-medium">{formatCurrency(row.withdrawn)}</span></div>
-                                    <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
-                                    <div className="flex justify-between font-bold text-base"><span>Closing Balance:</span> <span className="font-bold">{formatCurrency(row.closingBalance)}</span></div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </ScrollArea>
+                            </div>
+                        </ScrollArea>
+                    </TabsContent>
+                    <TabsContent value="monthly">
+                        <ScrollArea className="h-96">
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Month</TableHead>
+                                            <TableHead>Opening Balance</TableHead>
+                                            <TableHead>Withdrawal</TableHead>
+                                            <TableHead>Interest Earned</TableHead>
+                                            <TableHead className="text-right">Closing Balance</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {monthlyAmortization.map((row) => (
+                                            <TableRow key={row.month}>
+                                                <TableCell className="font-medium">{row.month}</TableCell>
+                                                <TableCell>{formatCurrency(row.openingBalance)}</TableCell>
+                                                <TableCell>{formatCurrency(row.withdrawn)}</TableCell>
+                                                <TableCell>{formatCurrency(row.interestEarned)}</TableCell>
+                                                <TableCell className="text-right font-semibold">{formatCurrency(row.closingBalance)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            <div className="block md:hidden space-y-4 p-2">
+                                {monthlyAmortization.map((row) => (
+                                    <Card key={row.month}>
+                                        <CardHeader>
+                                            <CardTitle>Month {row.month}</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2 text-sm">
+                                            <div className="flex justify-between"><span>Opening Balance:</span> <span className="font-medium">{formatCurrency(row.openingBalance)}</span></div>
+                                            <div className="flex justify-between"><span>Withdrawal:</span> <span className="font-medium">{formatCurrency(row.withdrawn)}</span></div>
+                                            <div className="flex justify-between"><span>Interest Earned:</span> <span className="font-medium">{formatCurrency(row.interestEarned)}</span></div>
+                                            <div className="flex justify-between font-bold text-base"><span>Closing Balance:</span> <span className="font-bold">{formatCurrency(row.closingBalance)}</span></div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </ScrollArea>
+                    </TabsContent>
+                </Tabs>
             </CardContent>
         </Card>
         <Card>
