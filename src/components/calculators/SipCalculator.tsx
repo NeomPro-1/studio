@@ -64,7 +64,6 @@ export function SipCalculator() {
     const i = returnRate / 100 / 12;
 
     for (let year = 1; year <= timePeriod; year++) {
-        let yearStartValue = futureValue;
         for (let month = 1; month <= 12; month++) {
           let monthStartValue = futureValue;
           futureValue = (futureValue + monthlyInvestment) * (1 + i);
@@ -366,5 +365,3 @@ export function SipCalculator() {
     </div>
   );
 }
-
-    

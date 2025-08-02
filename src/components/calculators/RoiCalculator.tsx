@@ -152,8 +152,8 @@ export function RoiCalculator() {
                         ROI = ((Final Value - Initial Investment) / Initial Investment) * 100
                     </p>
                 </div>
-                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-                    <li><span className="font-semibold text-foreground">Annualized ROI</span> is also calculated to show the yearly rate of return.</li>
+                 <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                    <li><span className="font-semibold text-foreground">Annualized ROI</span> is also calculated to show the yearly rate of return. This is the same as the CAGR.</li>
                 </ul>
             </CardContent>
         </Card>

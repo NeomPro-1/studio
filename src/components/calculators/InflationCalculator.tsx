@@ -171,11 +171,9 @@ export function InflationCalculator() {
                         <p>
                            Inflation is the rate at which prices rise, causing the purchasing power of your money to fall. This calculator demonstrates this "silent thief" in action, but more importantly, it shows you the solution: **investing**.
                         </p>
-                        <p className="font-semibold">Here is a simple example:</p>
                         <p>
                            An item that costs {formatCurrency(currentAmount)} today will cost <span className="font-bold">{formatCurrency(futureCost)}</span> in {timePeriod} years, assuming {formatPercentage(inflationRate)} inflation. If you just save your {formatCurrency(currentAmount)} in cash, you won't be able to afford that item in the future.
                         </p>
-                        <p className="font-semibold">How do you become profitable?</p>
                         <p>
                            If you invest that same {formatCurrency(currentAmount)} at an expected return of {formatPercentage(investmentRate)}, it could grow to <span className="font-bold">{formatCurrency(investmentValue)}</span> in {timePeriod} years. After buying that same item for its future price of {formatCurrency(futureCost)}, you would still have <span className="font-bold text-primary">{formatCurrency(netGain)}</span> left over. This is how you build real wealth.
                         </p>
