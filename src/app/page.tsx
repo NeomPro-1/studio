@@ -51,6 +51,7 @@ export default function Home() {
           <p className="mb-2">&copy; {new Date().getFullYear()} GrowthCalculator. All rights reserved.</p>
           <Separator className="my-2 max-w-xs mx-auto" />
           <div className="flex justify-center items-center gap-4">
+            <Link href="/about" className="hover:text-primary hover:underline">About Us</Link>
             <Link href="/disclaimer" className="hover:text-primary hover:underline">Disclaimer</Link>
             <Link href="/terms" className="hover:text-primary hover:underline">Terms of Use</Link>
           </div>
