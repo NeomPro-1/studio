@@ -9,7 +9,7 @@ export type CalculatorInfo = {
 
 export const CALCULATORS: CalculatorInfo[] = [
   {
-    name: "SIP Calculator",
+    name: "Mutual Fund (SIP) Calculator",
     description: "Calculate the future value of your monthly investments (SIP).",
     path: "/calculators/sip",
     icon: PieChart,
@@ -133,6 +133,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     description: "See how inflation erodes the value of your money over time.",
     path: "/calculators/inflation",
     icon: TrendingDown,
+  },
+  {
+    name: "Income Tax Calculator",
+    description: "Estimate your tax liability under the old and new regimes.",
+    path: "/calculators/tax",
+    icon: FileText,
   },
   {
     name: "Real Estate vs. MF Comparator",
