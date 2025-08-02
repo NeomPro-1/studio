@@ -1,4 +1,4 @@
-import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, TrendingDown, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target, Building } from "lucide-react"
+import { Calculator, PieChart, Landmark, FileText, LucideIcon, Home, TrendingUp, TrendingDown, Wallet, ShieldCheck, Briefcase, PiggyBank, ReceiptText, LineChart, BarChartHorizontal, Award, WalletCards, FastForward, HeartHandshake, Target, Building, HelpCircle } from "lucide-react"
 
 export type CalculatorInfo = {
     name: string;
@@ -146,6 +146,12 @@ export const CALCULATORS: CalculatorInfo[] = [
     path: "/calculators/real-estate-vs-mf",
     icon: Building,
   },
+   {
+    name: "FAQ",
+    description: "Find answers to your most common questions.",
+    path: "/faq",
+    icon: HelpCircle,
+  }
 ];
 
 export const CALCULATORS_MAP = new Map(CALCULATORS.map(calc => [calc.name, calc]));
