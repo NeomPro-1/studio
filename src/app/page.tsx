@@ -8,6 +8,7 @@ import {
 import { CALCULATORS } from '@/lib/constants';
 import { Header } from '@/components/Header';
 import { ArrowRight } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 export default function Home() {
   return (
@@ -45,7 +46,13 @@ export default function Home() {
         </div>
       </main>
       <footer className="text-center py-6 text-muted-foreground text-sm">
-        <p>&copy; {new Date().getFullYear()} GrowthCalculator. All rights reserved.</p>
+        <div className="container mx-auto">
+          <p className="mb-2">&copy; {new Date().getFullYear()} GrowthCalculator. All rights reserved.</p>
+          <Separator className="my-2 max-w-xs mx-auto" />
+          <div className="flex justify-center items-center gap-4">
+            <Link href="/disclaimer" className="hover:text-primary hover:underline">Disclaimer</Link>
+          </div>
+        </div>
       </footer>
     </div>
   );
