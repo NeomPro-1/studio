@@ -123,12 +123,6 @@ export const CALCULATORS: CalculatorInfo[] = [
     icon: Home,
   },
   {
-    name: "Income Tax Calculator",
-    description: "Estimate your income tax for the financial year.",
-    path: "/calculators/tax",
-    icon: FileText,
-  },
-  {
     name: "GST Calculator",
     description: "Calculate Goods and Services Tax (GST) for any amount.",
     path: "/calculators/gst",
