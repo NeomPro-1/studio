@@ -5,9 +5,10 @@ export type CalculatorInfo = {
     description: string;
     path: string;
     icon: LucideIcon;
+    component: React.ComponentType;
 };
 
-export const CALCULATORS: CalculatorInfo[] = [
+export const CALCULATORS_LIST: Omit<CalculatorInfo, 'component'>[] = [
   {
     name: "Mutual Fund (SIP) Calculator",
     description: "Calculate the future value of your monthly investments (SIP).",
@@ -154,4 +155,6 @@ export const CALCULATORS: CalculatorInfo[] = [
   }
 ];
 
-export const CALCULATORS_MAP = new Map(CALCULATORS.map(calc => [calc.name, calc]));
+export const CALCULATORS = CALCULATORS_LIST;
+
+export const CALCULATORS_MAP = new Map(CALCULATORS.map(calc => [calc.path.split('/').pop(), calc]));
