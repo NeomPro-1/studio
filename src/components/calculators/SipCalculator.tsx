@@ -113,7 +113,7 @@ export function SipCalculator() {
     
     setTotalValue(finalTotalValue);
     setTotalInvested(finalTotalInvested);
-    setEstReturns(finalTotalValue - totalTotalInvested);
+    setEstReturns(finalTotalValue - finalTotalInvested);
 
   }, [monthlyInvestment, returnRate, timePeriod]);
 
