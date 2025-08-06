@@ -18,6 +18,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '../ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const chartConfig = {
     principal: {
@@ -61,6 +63,9 @@ export function EmiCalculator({
   const [totalPayment, setTotalPayment] = useState(0);
   const [amortizationData, setAmortizationData] = useState<AmortizationData[]>([]);
 
+  const [visibleYears, setVisibleYears] = useState(6);
+  const [visibleMonths, setVisibleMonths] = useState(12);
+
   const chartData = [
     { name: 'principal', value: loanAmount, fill: 'var(--color-principal)' },
     { name: 'interest', value: totalInterest, fill: 'var(--color-interest)'  },
@@ -88,6 +93,9 @@ export function EmiCalculator({
   }, [amortizationData]);
 
   useEffect(() => {
+    setVisibleYears(6);
+    setVisibleMonths(12);
+
     const principal = loanAmount;
     const rate = interestRate / 12 / 100;
     const n = tenure * 12;
@@ -125,6 +133,15 @@ export function EmiCalculator({
       setAmortizationData([]);
     }
   }, [loanAmount, interestRate, tenure]);
+  
+  const displayedYearlyData = yearlyAmortizationData.slice(0, visibleYears);
+  const displayedMonthlyData = amortizationData.slice(0, visibleMonths);
+  
+  const showMoreYears = () => setVisibleYears(prev => Math.min(prev + 6, yearlyAmortizationData.length));
+  const showLessYears = () => setVisibleYears(prev => Math.max(6, prev - 6));
+
+  const showMoreMonths = () => setVisibleMonths(prev => Math.min(prev + 12, amortizationData.length));
+  const showLessMonths = () => setVisibleMonths(prev => Math.max(12, prev - 12));
 
 
   return (
@@ -286,7 +303,7 @@ export function EmiCalculator({
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {yearlyAmortizationData.map((row) => (
+                                        {displayedYearlyData.map((row) => (
                                             <TableRow key={row.year}>
                                                 <TableCell className="font-medium">{row.year}</TableCell>
                                                 <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
@@ -299,7 +316,7 @@ export function EmiCalculator({
                                 </Table>
                             </div>
                             <div className="block md:hidden space-y-4 p-2">
-                                {yearlyAmortizationData.map((row) => (
+                                {displayedYearlyData.map((row) => (
                                     <Card key={row.year}>
                                         <CardHeader>
                                             <CardTitle>Year {row.year}</CardTitle>
@@ -314,6 +331,18 @@ export function EmiCalculator({
                                 ))}
                             </div>
                         </ScrollArea>
+                        {yearlyAmortizationData.length > 6 && (
+                            <div className="flex justify-center items-center gap-4 mt-4">
+                                <Button variant="outline" onClick={showLessYears} disabled={visibleYears <= 6}>
+                                    <ChevronUp className="mr-2 h-4 w-4" />
+                                    Show Less
+                                </Button>
+                                <Button variant="outline" onClick={showMoreYears} disabled={visibleYears >= yearlyAmortizationData.length}>
+                                    <ChevronDown className="mr-2 h-4 w-4" />
+                                    Show More
+                                </Button>
+                            </div>
+                        )}
                     </TabsContent>
                     <TabsContent value="monthly">
                          <ScrollArea className="h-96">
@@ -329,7 +358,7 @@ export function EmiCalculator({
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {amortizationData.map((row) => (
+                                        {displayedMonthlyData.map((row) => (
                                             <TableRow key={row.month}>
                                                 <TableCell className="font-medium">{row.month}</TableCell>
                                                 <TableCell>{formatCurrency(row.principalPaid)}</TableCell>
@@ -342,7 +371,7 @@ export function EmiCalculator({
                                 </Table>
                             </div>
                             <div className="block md:hidden space-y-4 p-2">
-                                {amortizationData.map((row) => (
+                                {displayedMonthlyData.map((row) => (
                                     <Card key={row.month}>
                                         <CardHeader>
                                             <CardTitle>Month {row.month}</CardTitle>
@@ -357,6 +386,18 @@ export function EmiCalculator({
                                 ))}
                             </div>
                         </ScrollArea>
+                        {amortizationData.length > 12 && (
+                            <div className="flex justify-center items-center gap-4 mt-4">
+                                <Button variant="outline" onClick={showLessMonths} disabled={visibleMonths <= 12}>
+                                    <ChevronUp className="mr-2 h-4 w-4" />
+                                    Show Less
+                                </Button>
+                                <Button variant="outline" onClick={showMoreMonths} disabled={visibleMonths >= amortizationData.length}>
+                                    <ChevronDown className="mr-2 h-4 w-4" />
+                                    Show More
+                                </Button>
+                            </div>
+                        )}
                     </TabsContent>
                 </Tabs>
             </CardContent>
