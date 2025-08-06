@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -18,6 +17,8 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } fro
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 const chartConfig = {
     invested: {
@@ -53,6 +54,9 @@ export function SipCalculator() {
   const [totalInvested, setTotalInvested] = useState(0);
   const [estReturns, setEstReturns] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
+  
+  const [visibleYears, setVisibleYears] = useState(1);
+  const [visibleMonths, setVisibleMonths] = useState(12);
 
   const { chartData, yearlyAmortization, monthlyAmortization } = useMemo(() => {
     const chartDataResult = [{ year: 'Year 0', invested: 0, total: 0 }];
@@ -93,6 +97,12 @@ export function SipCalculator() {
 
     return { chartData: chartDataResult, yearlyAmortization: yearlyAmortizationResult, monthlyAmortization: monthlyAmortizationResult };
   }, [monthlyInvestment, returnRate, timePeriod]);
+  
+  // Reset visible counts when parameters change
+  useEffect(() => {
+    setVisibleYears(1);
+    setVisibleMonths(12);
+  }, [monthlyInvestment, returnRate, timePeriod]);
 
   useEffect(() => {
     const n = timePeriod * 12;
@@ -103,10 +113,18 @@ export function SipCalculator() {
     
     setTotalValue(finalTotalValue);
     setTotalInvested(finalTotalInvested);
-    setEstReturns(finalTotalValue - finalTotalInvested);
+    setEstReturns(finalTotalValue - totalTotalInvested);
 
   }, [monthlyInvestment, returnRate, timePeriod]);
 
+  const displayedYearlyData = yearlyAmortization.slice(0, visibleYears);
+  const displayedMonthlyData = monthlyAmortization.slice(0, visibleMonths);
+  
+  const showMoreYears = () => setVisibleYears(prev => Math.min(prev + 1, yearlyAmortization.length));
+  const showLessYears = () => setVisibleYears(prev => Math.max(1, prev - 1));
+
+  const showMoreMonths = () => setVisibleMonths(prev => Math.min(prev + 12, monthlyAmortization.length));
+  const showLessMonths = () => setVisibleMonths(prev => Math.max(12, prev - 12));
 
   return (
     <div className="space-y-8">
@@ -268,7 +286,7 @@ export function SipCalculator() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {yearlyAmortization.map((row) => (
+                                        {displayedYearlyData.map((row) => (
                                             <TableRow key={row.year}>
                                                 <TableCell className="font-medium">{row.year}</TableCell>
                                                 <TableCell>{formatCurrency(row.totalInvestment)}</TableCell>
@@ -280,7 +298,7 @@ export function SipCalculator() {
                                 </Table>
                             </div>
                             <div className="block md:hidden space-y-4 p-2">
-                                {yearlyAmortization.map((row) => (
+                                {displayedYearlyData.map((row) => (
                                     <Card key={row.year}>
                                         <CardHeader>
                                             <CardTitle>Year {row.year}</CardTitle>
@@ -294,6 +312,16 @@ export function SipCalculator() {
                                 ))}
                             </div>
                         </ScrollArea>
+                        <div className="flex justify-center items-center gap-4 mt-4">
+                            <Button variant="outline" onClick={showLessYears} disabled={visibleYears <= 1}>
+                                <ChevronUp className="mr-2 h-4 w-4" />
+                                Show Less
+                            </Button>
+                            <Button variant="outline" onClick={showMoreYears} disabled={visibleYears >= yearlyAmortization.length}>
+                                <ChevronDown className="mr-2 h-4 w-4" />
+                                Show More
+                            </Button>
+                        </div>
                     </TabsContent>
                     <TabsContent value="monthly">
                          <ScrollArea className="h-96">
@@ -309,7 +337,7 @@ export function SipCalculator() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {monthlyAmortization.map((row) => (
+                                        {displayedMonthlyData.map((row) => (
                                             <TableRow key={row.month}>
                                                 <TableCell className="font-medium">{row.month}</TableCell>
                                                 <TableCell>{formatCurrency(row.investment)}</TableCell>
@@ -322,7 +350,7 @@ export function SipCalculator() {
                                 </Table>
                             </div>
                              <div className="block md:hidden space-y-4 p-2">
-                                {monthlyAmortization.map((row) => (
+                                {displayedMonthlyData.map((row) => (
                                     <Card key={row.month}>
                                         <CardHeader>
                                             <CardTitle>Month {row.month}</CardTitle>
@@ -337,6 +365,16 @@ export function SipCalculator() {
                                 ))}
                             </div>
                         </ScrollArea>
+                         <div className="flex justify-center items-center gap-4 mt-4">
+                            <Button variant="outline" onClick={showLessMonths} disabled={visibleMonths <= 12}>
+                                <ChevronUp className="mr-2 h-4 w-4" />
+                                Show Less
+                            </Button>
+                            <Button variant="outline" onClick={showMoreMonths} disabled={visibleMonths >= monthlyAmortization.length}>
+                                <ChevronDown className="mr-2 h-4 w-4" />
+                                Show More
+                            </Button>
+                        </div>
                     </TabsContent>
                 </Tabs>
             </CardContent>
