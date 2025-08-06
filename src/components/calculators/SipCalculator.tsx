@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo } from 'react';
@@ -55,7 +56,7 @@ export function SipCalculator() {
   const [estReturns, setEstReturns] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   
-  const [visibleYears, setVisibleYears] = useState(1);
+  const [visibleYears, setVisibleYears] = useState(12);
   const [visibleMonths, setVisibleMonths] = useState(12);
 
   const { chartData, yearlyAmortization, monthlyAmortization } = useMemo(() => {
@@ -100,7 +101,7 @@ export function SipCalculator() {
   
   // Reset visible counts when parameters change
   useEffect(() => {
-    setVisibleYears(1);
+    setVisibleYears(12);
     setVisibleMonths(12);
   }, [monthlyInvestment, returnRate, timePeriod]);
 
@@ -120,8 +121,8 @@ export function SipCalculator() {
   const displayedYearlyData = yearlyAmortization.slice(0, visibleYears);
   const displayedMonthlyData = monthlyAmortization.slice(0, visibleMonths);
   
-  const showMoreYears = () => setVisibleYears(prev => Math.min(prev + 1, yearlyAmortization.length));
-  const showLessYears = () => setVisibleYears(prev => Math.max(1, prev - 1));
+  const showMoreYears = () => setVisibleYears(prev => Math.min(prev + 12, yearlyAmortization.length));
+  const showLessYears = () => setVisibleYears(prev => Math.max(12, prev - 12));
 
   const showMoreMonths = () => setVisibleMonths(prev => Math.min(prev + 12, monthlyAmortization.length));
   const showLessMonths = () => setVisibleMonths(prev => Math.max(12, prev - 12));
@@ -313,7 +314,7 @@ export function SipCalculator() {
                             </div>
                         </ScrollArea>
                         <div className="flex justify-center items-center gap-4 mt-4">
-                            <Button variant="outline" onClick={showLessYears} disabled={visibleYears <= 1}>
+                            <Button variant="outline" onClick={showLessYears} disabled={visibleYears <= 12}>
                                 <ChevronUp className="mr-2 h-4 w-4" />
                                 Show Less
                             </Button>
