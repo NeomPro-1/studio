@@ -56,7 +56,7 @@ export function SipCalculator() {
   const [estReturns, setEstReturns] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   
-  const [visibleYears, setVisibleYears] = useState(12);
+  const [visibleYears, setVisibleYears] = useState(6);
   const [visibleMonths, setVisibleMonths] = useState(12);
 
   const { chartData, yearlyAmortization, monthlyAmortization } = useMemo(() => {
@@ -101,7 +101,7 @@ export function SipCalculator() {
   
   // Reset visible counts when parameters change
   useEffect(() => {
-    setVisibleYears(12);
+    setVisibleYears(6);
     setVisibleMonths(12);
   }, [monthlyInvestment, returnRate, timePeriod]);
 
@@ -110,7 +110,8 @@ export function SipCalculator() {
     const i = returnRate / 100 / 12;
     const finalTotalInvested = monthlyInvestment * n;
     
-    const finalTotalValue = monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
+    // Corrected formula for future value of a SIP (annuity due)
+    const finalTotalValue = n > 0 ? monthlyInvestment * (((Math.pow(1 + i, n) - 1) / i) * (1 + i)) : 0;
     
     setTotalValue(finalTotalValue);
     setTotalInvested(finalTotalInvested);
@@ -121,8 +122,8 @@ export function SipCalculator() {
   const displayedYearlyData = yearlyAmortization.slice(0, visibleYears);
   const displayedMonthlyData = monthlyAmortization.slice(0, visibleMonths);
   
-  const showMoreYears = () => setVisibleYears(prev => Math.min(prev + 12, yearlyAmortization.length));
-  const showLessYears = () => setVisibleYears(prev => Math.max(12, prev - 12));
+  const showMoreYears = () => setVisibleYears(prev => Math.min(prev + 6, yearlyAmortization.length));
+  const showLessYears = () => setVisibleYears(prev => Math.max(6, prev - 6));
 
   const showMoreMonths = () => setVisibleMonths(prev => Math.min(prev + 12, monthlyAmortization.length));
   const showLessMonths = () => setVisibleMonths(prev => Math.max(12, prev - 12));
@@ -313,16 +314,18 @@ export function SipCalculator() {
                                 ))}
                             </div>
                         </ScrollArea>
-                        <div className="flex justify-center items-center gap-4 mt-4">
-                            <Button variant="outline" onClick={showLessYears} disabled={visibleYears <= 12}>
-                                <ChevronUp className="mr-2 h-4 w-4" />
-                                Show Less
-                            </Button>
-                            <Button variant="outline" onClick={showMoreYears} disabled={visibleYears >= yearlyAmortization.length}>
-                                <ChevronDown className="mr-2 h-4 w-4" />
-                                Show More
-                            </Button>
-                        </div>
+                        {yearlyAmortization.length > 6 && (
+                            <div className="flex justify-center items-center gap-4 mt-4">
+                                <Button variant="outline" onClick={showLessYears} disabled={visibleYears <= 6}>
+                                    <ChevronUp className="mr-2 h-4 w-4" />
+                                    Show Less
+                                </Button>
+                                <Button variant="outline" onClick={showMoreYears} disabled={visibleYears >= yearlyAmortization.length}>
+                                    <ChevronDown className="mr-2 h-4 w-4" />
+                                    Show More
+                                </Button>
+                            </div>
+                        )}
                     </TabsContent>
                     <TabsContent value="monthly">
                          <ScrollArea className="h-96">
