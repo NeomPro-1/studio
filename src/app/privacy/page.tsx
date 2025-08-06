@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
             </p>
             <h3 className="font-semibold text-foreground pt-4">5. Contact Us</h3>
             <p>
-              If you have any questions about this Privacy Policy, please contact us.
+              If you have any questions about this Privacy Policy, please contact us at <a href="mailto:neom.music27@gmail.com" className="text-primary hover:underline">neom.music27@gmail.com</a>.
             </p>
           </CardContent>
         </Card>
